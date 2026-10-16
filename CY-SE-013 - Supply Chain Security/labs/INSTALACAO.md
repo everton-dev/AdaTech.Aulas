@@ -23,7 +23,7 @@ docker compose version          # Compose v2 (vem no Docker Desktop)
 
 | Sistema | OPA | Conftest |
 |---|---|---|
-| Windows (PowerShell) | `winget install OpenPolicyAgent.OPA` **ou** baixe `opa_windows_amd64.exe` em <https://github.com/open-policy-agent/opa/releases/latest>, renomeie para `opa.exe` e coloque em uma pasta do `PATH` (ex.: `C:\tools`). | Baixe `conftest_<versão>_Windows_x86_64.zip` em <https://github.com/open-policy-agent/conftest/releases/latest>, extraia `conftest.exe` para a mesma pasta. |
+| Windows (PowerShell) | `winget install OpenPolicyAgent.OPA`, **ou** `winget install --id open-policy-agent.opa --exact --version 1.21.1` **ou** baixe `opa_windows_amd64.exe` em <https://github.com/open-policy-agent/opa/releases/latest>, renomeie para `opa.exe` e coloque em uma pasta do `PATH` (ex.: `C:\tools`). | Baixe `conftest_<versão>_Windows_x86_64.zip` em <https://github.com/open-policy-agent/conftest/releases/latest>, extraia `conftest.exe` para a mesma pasta. |
 | macOS | `brew install opa` | `brew install conftest` |
 | Linux | `OPA_LATEST=$(curl -s https://api.github.com/repos/open-policy-agent/opa/releases/latest \| grep tag_name \| cut -d '"' -f4); curl -L -o opa "https://github.com/open-policy-agent/opa/releases/download/${OPA_LATEST}/opa_linux_amd64_static" && chmod +x opa && sudo mv opa /usr/local/bin/` | `LATEST=$(curl -s https://api.github.com/repos/open-policy-agent/conftest/releases/latest \| grep tag_name \| cut -d '"' -f4); curl -LO "https://github.com/open-policy-agent/conftest/releases/download/${LATEST}/conftest_${LATEST#v}_Linux_x86_64.tar.gz" && tar xzf conftest_*.tar.gz && sudo mv conftest /usr/local/bin/` |
 
