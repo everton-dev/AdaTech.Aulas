@@ -1,0 +1,36 @@
+{
+  "id": "937d8f3695264174bf391ee3fcca02cb",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O que é o **Log Analytics** no Azure?"
+  ],
+  "alternatives": [
+    {
+      "id": "f55448b6-4595-4b6a-975c-8433e4e4a613",
+      "text": "É uma ferramenta do portal do Azure usada para editar e executar consultas de custos que temos no Azure.",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "0de9457b-91a9-463d-b66c-4b5e1ade83a0",
+      "text": "É uma ferramenta do portal do Azure usada para logs dos usuários do Azure e analisar os recursos que eles acessam de maneira interativa.",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "a7cbd5b0-6f1e-40ad-8e3e-7a0f0f656b3f",
+      "text": "É uma ferramenta do portal do Azure usada para editar e executar consultas de log dos dados coletados pelos logs do Azure Monitor e analisar os resultados de maneira interativa.",
+      "feedback": "Correto!",
+      "correct": true
+    }
+  ]
+}

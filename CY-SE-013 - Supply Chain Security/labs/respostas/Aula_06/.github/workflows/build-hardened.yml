@@ -1,0 +1,42 @@
+name: build-hardened
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Permissoes minimas: leitura do repo + OIDC (para assinatura keyless na Aula 07)
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Lockfile imutavel
+        run: |
+          test -f package-lock.json
+          git diff --exit-code package-lock.json || { echo "package-lock.json alterado no pipeline"; exit 1; }
+
+      - name: Instalar com hashes do lockfile, sem scripts
+        run: npm ci --ignore-scripts
+
+      - name: Verificar assinaturas Sigstore dos pacotes
+        run: npm audit signatures
+
+      - name: Auditoria de vulnerabilidades (bloqueia HIGH+)
+        run: npm audit --audit-level=high
+
+      - name: Lint e testes
+        run: |
+          npm run lint --if-present
+          npm test --if-present

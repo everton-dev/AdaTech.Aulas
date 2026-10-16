@@ -1,0 +1,36 @@
+{
+  "id": "f43745b49cec4593a05544215083449d",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Qual desses recursos é Serveless?"
+  ],
+  "alternatives": [
+    {
+      "id": "b8dfafa4-54cc-48b6-9e16-c0056bc955df",
+      "text": "Maquina Virtual do Azure",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "ab8011e8-72ea-4567-bc94-3da4bf0ae63e",
+      "text": "Function App (Azure Functions)",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "2ae154c9-95ab-4979-bf11-b5d670073339",
+      "text": "Serviço do Kubernets do Azure",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

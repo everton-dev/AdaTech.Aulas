@@ -1,0 +1,32 @@
+{
+  "id": "66f9764ac33b489e872feef4ba5cad3f",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O Azure DevOps não oferece modelos predefinidos que facilitem a criação de pipelines, essa não é uma ferramenta para iniciantes, as equipes precisam ter bons conhecimentos para que possam avançar rapidamente na criação de uma pipeline funcional.",
+    "",
+    "Essa afirmação é:"
+  ],
+  "alternatives": [
+    {
+      "id": "6bb184f7-c254-40e4-b27d-825ef8131cca",
+      "text": "Verdadeira",
+      "feedback": "Errado!\nO Azure DevOps oferece modelos predefinidos que facilitam a criação de pipelines, possibilitando que iniciantes e equipes avancem rapidamente na criação de uma pipeline funcional.",
+      "correct": false
+    },
+    {
+      "id": "2e1e60c0-5c95-456c-ad4c-78c3feb1cd21",
+      "text": "Falsa",
+      "feedback": "Correto!",
+      "correct": true
+    }
+  ]
+}

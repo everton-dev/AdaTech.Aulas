@@ -1,0 +1,42 @@
+{
+  "id": "efdcdcf93e9f43319127f23f3956a276",
+  "type": "VF",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Assinale verdadeiro para as ferramentas que podemos utilizar para fazer **Integração Contínua** (CI) e **Implantação Contínua** (CD):"
+  ],
+  "alternatives": [
+    {
+      "id": "1932828c-f613-4404-b794-286250340e9a",
+      "text": "Git",
+      "feedback": "Git não é uma ferramenta de CI/CD.",
+      "correct": false
+    },
+    {
+      "id": "7797947b-3eba-4203-9101-5b81d5f01e90",
+      "text": "GitHub Actions",
+      "feedback": "GitHub Actions: Oferece uma integração CI/CD para projetos hospedados no GitHub. Seus workflows YAML possibilitam criar pipelines altamente personalizáveis.",
+      "correct": true
+    },
+    {
+      "id": "5b902ae1-074f-4636-a9db-8b0f44df0f34",
+      "text": "Azure DevOps",
+      "feedback": "O Azure DevOps fornece ferramentas para CI/CD com suporte para várias linguagens e ambientes. Com repositórios Git, pipelines YAML e integração com serviços do Azure, ele se adapta bem a projetos que utilizam serviços da Microsoft ou ambientes híbridos.",
+      "correct": true
+    },
+    {
+      "id": "1388a874-9246-455a-938d-17b35b1532b8",
+      "text": "Jenkins",
+      "feedback": "Uma das ferramentas de CI/CD mais conhecidas, o Jenkins é altamente configurável e possui uma ampla biblioteca de plugins, permitindo integração com diversas ferramentas e tecnologias.",
+      "correct": true
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+name: verify-deploy
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        # Exigir digest (@sha256:...) em vez de tag: tags sao mutaveis e podem
+        # apontar para outro conteudo depois de assinadas, o que quebraria a
+        # garantia de que a imagem verificada e exatamente a que foi assinada.
+        description: "Imagem por digest (ghcr.io/org/app@sha256:...)"
+        required: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
+
+      # A verificacao e keyless: nao ha chave publica fixa para distribuir/revogar.
+      # Em vez disso, o Fulcio emite um certificado de curta duracao atrelado a
+      # identidade OIDC do workflow que assinou, e e essa identidade (repo +
+      # issuer) que validamos aqui — nao "qualquer assinatura valida".
+      - name: Verificar assinatura (identidade restrita)
+        run: |
+          cosign verify "${{ inputs.image }}" \
+            --certificate-identity-regexp '^https://github.com/empresa/.*' \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+      # --type slsaprovenance1 = formato de attestation do SLSA v1 (predicate
+      # "https://slsa.dev/provenance/v1"). O tipo antigo "slsaprovenance" é do
+      # SLSA v0.2 e nao bate com o predicate gerado na assinatura (Aula_07):
+      # usar o tipo errado faz a verificacao falhar mesmo com a imagem correta.
+      - name: Verificar provenance SLSA
+        run: |
+          cosign verify-attestation "${{ inputs.image }}" --type slsaprovenance1 \
+            --certificate-identity-regexp '^https://github.com/empresa/.*' \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+      # Confirma que o SBOM (CycloneDX) publicado junto com a imagem tambem
+      # foi assinado pela mesma identidade confiavel, e nao apenas anexado.
+      - name: Verificar SBOM anexado
+        run: |
+          cosign verify-attestation "${{ inputs.image }}" --type cyclonedx \
+            --certificate-identity-regexp '^https://github.com/empresa/.*' \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com

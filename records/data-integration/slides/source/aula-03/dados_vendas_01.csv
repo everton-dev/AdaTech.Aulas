@@ -1,0 +1,21 @@
+product_id,product_name,quantidade,preco_unitario
+1,Notebook Dell Inspiron,15,2500.00
+2,Mouse Logitech MX Master,45,250.00
+3,Teclado Mecânico RGB,32,180.00
+4,Monitor 24 polegadas,28,850.00
+5,Smartphone Samsung Galaxy,22,1200.00
+6,Fone de Ouvido Bluetooth,67,120.00
+7,Tablet iPad Air,18,2800.00
+8,Impressora HP LaserJet,12,650.00
+9,Webcam Full HD,38,95.00
+10,SSD 1TB Samsung,41,320.00
+11,Memoria RAM 16GB DDR4,29,280.00
+12,Placa de Video RTX 4060,8,1800.00
+13,Cadeira Gamer Ergonomica,14,750.00
+14,Mesa para Computador,23,450.00
+15,Roteador Wi-Fi 6,35,180.00
+16,Power Bank 20000mAh,52,85.00
+17,Cabo HDMI 2.1,78,25.00
+18,Suporte para Monitor,26,65.00
+19,Cooler para Processador,33,150.00
+20,Estabilizador 1000VA,19,220.00

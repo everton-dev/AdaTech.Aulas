@@ -1,0 +1,125 @@
+name: Build, test and publish
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-images-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Test backend
+        working-directory: backend
+        run: npm ci && npm test
+
+      - name: Build containers
+        run: docker compose --profile etl build
+
+      - name: Start application
+        run: docker compose up --detach --wait
+
+      - name: Run smoke test
+        run: sh scripts/smoke-test.sh
+
+      - name: Load data warehouse
+        run: docker compose --profile etl run --rm etl
+
+      - name: Validate warehouse
+        run: |
+          test "$(docker compose exec -T db-dw psql -U dw_user -d movieflix_dw -tAc 'SELECT COUNT(*) FROM fact_rating')" = "35"
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down --volumes
+
+  publish:
+    if: github.event_name == 'push'
+    needs: test
+    runs-on: ubuntu-latest
+    environment: Production
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build images
+        run: docker compose --profile etl build
+
+      - name: Calculate next minor version
+        id: version
+        shell: bash
+        run: |
+          url="https://hub.docker.com/v2/repositories/$DOCKERHUB_USERNAME/movieflix-proxy/tags?page_size=100"
+          response="$(curl --silent --show-error --write-out $'\n%{http_code}' "$url")"
+          body="${response%$'\n'*}"
+          status="${response##*$'\n'}"
+
+          if [ "$status" = "404" ]; then
+            version="1.0.0"
+          elif [ "$status" = "200" ]; then
+            current="$(printf '%s' "$body" | jq --raw-output '.results[].name' | grep --extended-regexp '^1\.[0-9]+\.0$' | sort --version-sort | tail --lines=1 || true)"
+            if [ -z "$current" ]; then
+              version="1.0.0"
+            else
+              minor="$(printf '%s' "$current" | cut --delimiter=. --fields=2)"
+              version="1.$((minor + 1)).0"
+            fi
+          else
+            echo "Docker Hub respondeu com HTTP $status ao consultar as tags." >&2
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Nova versao: $version"
+
+      - name: Tag images with semantic version
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          docker tag "$DOCKERHUB_USERNAME/movieflix-proxy:latest" "$DOCKERHUB_USERNAME/movieflix-proxy:$VERSION"
+          docker tag "$DOCKERHUB_USERNAME/movieflix-frontend:latest" "$DOCKERHUB_USERNAME/movieflix-frontend:$VERSION"
+          docker tag "$DOCKERHUB_USERNAME/movieflix-backend:latest" "$DOCKERHUB_USERNAME/movieflix-backend:$VERSION"
+          docker tag "$DOCKERHUB_USERNAME/movieflix-etl:latest" "$DOCKERHUB_USERNAME/movieflix-etl:$VERSION"
+
+      - name: Push latest images
+        run: docker compose --profile etl push
+
+      - name: Push versioned images
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          docker push "$DOCKERHUB_USERNAME/movieflix-proxy:$VERSION"
+          docker push "$DOCKERHUB_USERNAME/movieflix-frontend:$VERSION"
+          docker push "$DOCKERHUB_USERNAME/movieflix-backend:$VERSION"
+          docker push "$DOCKERHUB_USERNAME/movieflix-etl:$VERSION"

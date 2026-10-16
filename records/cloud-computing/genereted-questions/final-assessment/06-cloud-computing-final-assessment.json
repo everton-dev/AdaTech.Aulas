@@ -1,0 +1,36 @@
+{
+  "id": "921b46af689b43cfb9fe9529e5f5941d",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O que melhor descreve o **Azure Pipeline** dentro do **Azure DevOps**? Selecione a resposta que melhor o define."
+  ],
+  "alternatives": [
+    {
+      "id": "410326da-a019-422d-b46c-4c786f32d4dd",
+      "text": "O Azure Pipelines é a parte do Azure DevOps que cria, testa, otimiza os recursos do Azure com inteligência artificial e implanta projetos de código automaticamente. O Azure Pipelines combina integração contínua, testes contínuos e entrega contínua para criar, testar e entregar seu código para qualquer destino.",
+      "feedback": "Incorreto!\nNão inteligência artificial no Azure Pipeline.",
+      "correct": false
+    },
+    {
+      "id": "5e874ed2-9a01-4c74-afc6-ff921fa50c41",
+      "text": "O Azure Pipelines é a parte do Azure DevOps que cria, testa e implanta projetos de código automaticamente. O Azure Pipelines combina integração contínua, testes contínuos e entrega contínua para criar, testar e entregar seu código para qualquer destino.",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "0b2977f8-f73f-4d7c-ae1d-a7c5805aaee8",
+      "text": "O Azure Pipelines é a parte do Azure DevOps que cria, testa e implanta projetos de código automaticamente. O Azure Pipelines combina integração contínua, com auxilio de inteligência artificial para melhoria das integrações, testes contínuos e entrega contínua para criar, testar e entregar seu código para qualquer destino.",
+      "feedback": "Incorreto!\nNão inteligência artificial no Azure Pipeline.",
+      "correct": false
+    }
+  ]
+}

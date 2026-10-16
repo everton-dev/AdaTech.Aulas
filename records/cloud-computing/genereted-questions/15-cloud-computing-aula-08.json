@@ -1,0 +1,42 @@
+{
+  "id": "e4baa1251fc54d9298f53c11476f7605",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Quais os tipos de entregas de software que são mais comuns dentro do Azure?"
+  ],
+  "alternatives": [
+    {
+      "id": "abff9d77-6947-4076-93f7-93eb5ff2796b",
+      "text": "Máquinas Virtuais (VMs",
+      "feedback": "Errado!\nTodas as três anteriores estão corretas.",
+      "correct": true
+    },
+    {
+      "id": "4631e964-47da-44b7-b405-91fab399b15b",
+      "text": "Containers",
+      "feedback": "Errado!\nTodas as três anteriores estão corretas.",
+      "correct": false
+    },
+    {
+      "id": "c3dd1e6a-a804-404b-8f1c-4eb641e5220c",
+      "text": "Serverless",
+      "feedback": "Errado!\nTodas as três anteriores estão corretas.",
+      "correct": false
+    },
+    {
+      "id": "7cc74b45-e658-47c5-901b-9ec50176637e",
+      "text": "Todas as três anteriores estão corretas.",
+      "feedback": "Correto!",
+      "correct": false
+    }
+  ]
+}

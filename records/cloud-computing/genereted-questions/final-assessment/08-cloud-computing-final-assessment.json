@@ -1,0 +1,32 @@
+{
+  "id": "c2728c60678a4595afb31a565a876b1e",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Podemos desenvolver **Function Apps** (Azure Functions) com a linguagem de programação **Python**.",
+    "",
+    "Essa afirmação é verdadeira ou falsa?"
+  ],
+  "alternatives": [
+    {
+      "id": "dc761652-f414-43ae-badd-2437ad7de167",
+      "text": "Verdadeiro",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "cdf0b442-cd35-471a-933f-b5510c181846",
+      "text": "Falso",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

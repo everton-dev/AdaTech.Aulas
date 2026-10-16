@@ -1,0 +1,42 @@
+{
+  "id": "a6d1e52666ec4846ba853f809ba31f9d",
+  "type": "MULT",
+  "language": "",
+  "level": "Basic",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Um artista deseja criar uma nova obra de arte que combine elementos do cubismo com o estilo surrealista. Qual ferramenta de IA poderia auxiliar o artista nesse processo criativo?"
+  ],
+  "alternatives": [
+    {
+      "id": "0f6e8cb2-98e5-4729-bb57-0fd7a4a97eeb",
+      "text": "IA de Reconhecimento Facial",
+      "feedback": "Incorreto. A IA de Reconhecimento Facial é utilizada para identificar e reconhecer rostos em imagens, o que não é relevante para o processo criativo do artista.",
+      "correct": false
+    },
+    {
+      "id": "771467d9-403f-463c-b91a-fe26e38bc209",
+      "text": "IA de Processamento de Linguagem Natural",
+      "feedback": "Incorreto. A IA de Processamento de Linguagem Natural é focada em entender e gerar linguagem humana, o que não é diretamente aplicável à criação de uma obra de arte visual.",
+      "correct": false
+    },
+    {
+      "id": "5a4ff403-948d-4ca5-a606-7f6fb007137b",
+      "text": "IA Generativa",
+      "feedback": "Correto. A IA Generativa é capaz de criar novas imagens e conteúdos originais, combinando diferentes estilos e elementos. Nesse caso, ela poderia auxiliar o artista a explorar diferentes combinações de cubismo e surrealismo, gerando imagens que servem de inspiração para a sua obra.",
+      "correct": true
+    },
+    {
+      "id": "cc6fb2c3-7732-401f-bd52-8010749e1bc6",
+      "text": "IA de Robótica",
+      "feedback": "Incorreto. A IA de Robótica é utilizada para controlar robôs e realizar tarefas físicas, o que não está relacionado ao processo criativo do artista.",
+      "correct": false
+    }
+  ]
+}

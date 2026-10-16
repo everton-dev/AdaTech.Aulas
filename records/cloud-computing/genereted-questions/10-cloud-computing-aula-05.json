@@ -1,0 +1,42 @@
+{
+  "id": "74900779f9ec403bab3997640df08932",
+  "type": "VF",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Que ferramentas geralmente são utilizadas com IaC?"
+  ],
+  "alternatives": [
+    {
+      "id": "a0cadda9-9bc9-4599-a754-87b8ec03fe58",
+      "text": "Bicep",
+      "feedback": "**Bicep** é uma linguagem de modelagem que simplifica a criação de recursos no Azure em comparação ao ARM JSON, mas é exclusivo para o Azure.",
+      "correct": true
+    },
+    {
+      "id": "a4ab67a1-ed42-4614-b858-c3d9575987e8",
+      "text": "Terraform",
+      "feedback": "**Terraform **é uma ferramenta mais versátil que suporta múltiplos provedores de nuvem, possui uma sintaxe amigável e é ideal para ambientes multi-cloud, mas requer gerenciamento de estado.",
+      "correct": true
+    },
+    {
+      "id": "615a6ec6-c483-40ec-814f-df7fc76a1bc9",
+      "text": "SQL Server",
+      "feedback": "Errado!\nSQL Server é um banco de dados, não é uma ferramento de IaC.",
+      "correct": false
+    },
+    {
+      "id": "c4bcb630-6aa1-49be-86f9-c14581604137",
+      "text": "ARM Template",
+      "feedback": "**ARM Template** é o serviço de gerenciamento de recursos do Azure, mas sua sintaxe em JSON é considerada mais verbosa e complexa, tornando-a menos amigável para muitos usuários.",
+      "correct": true
+    }
+  ]
+}

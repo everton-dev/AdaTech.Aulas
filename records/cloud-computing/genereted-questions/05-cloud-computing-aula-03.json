@@ -1,0 +1,36 @@
+{
+  "id": "e01a58bdc3fd43938388976a1ea425b5",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O que é o Armazenamento de Blobs do Azure?"
+  ],
+  "alternatives": [
+    {
+      "id": "8703b604-3d8f-4cf2-aa51-629e89a26180",
+      "text": "É um banco de dados relacional.",
+      "feedback": "**Errado!**\nO Armazenamento de Blobs do Azure não é uma banco de dados relacional.",
+      "correct": false
+    },
+    {
+      "id": "250179b4-9d6b-47ba-ba8b-b71a3eecdac4",
+      "text": "É uma solução de armazenamento de objetos da Microsoft para a nuvem",
+      "feedback": "**Correto!**\nO Armazenamento de Blobs é otimizado para armazenar grandes quantidades de dados não estruturados. Dados não estruturados são dados que não estão de acordo com uma definição ou um modelo de dados específico, como texto ou dados binários.",
+      "correct": true
+    },
+    {
+      "id": "4b2a6f42-7507-4ab0-b3fb-6af509eecf50",
+      "text": "É uma solução de backup de arquivos do Azure",
+      "feedback": "**Errado!**\nO Armazenamento de Blobs do Azure não é uma solução de backup de arquivos do Azure.",
+      "correct": false
+    }
+  ]
+}

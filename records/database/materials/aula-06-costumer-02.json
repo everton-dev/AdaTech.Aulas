@@ -1,0 +1,74 @@
+{
+    "id": "12a2f76a-fb24-48b7-aca4-53975a93983e",
+    "name": "Mafalda de Oliveira",
+    "email": "mafalda.oliveira@ada.com.br",
+    "type": "PREMIUM",
+    "contacts": [
+        {
+            "id": "26ac1593-6dcb-4238-9674-8ff9ebc67bc2",
+            "countryCode": "+351",
+            "number": "975348932",
+            "type": "MOBILE",
+            "preferred": true
+        }
+    ],
+    "address": {
+        "id": "9e9615a1-3387-49aa-ae6b-15ea9826ba2e",
+        "street": "Rua das Carmélias",
+        "number": "123",
+        "complement": "Habitação 4",
+        "postalCode": "1100-000",
+        "city": "Porto",
+        "country": "Portugal"
+    },
+    "orders": [
+        {
+            "id": "f6373981-0f3a-42f4-9bd9-20894457ec5a",
+            "createdAt": "2020-01-01T00:00:00Z",
+            "updatedAt": "2020-01-01T00:00:00Z",
+            "status": "DELIVERED",
+            "items": [
+                {
+                    "id": "123e4567-e89b-12d3-a456-426614174004",
+                    "name": "Nintendo Switch",
+                    "quantity": 1,
+                    "price": 499.00
+                },
+                {
+                    "id": "123e4567-e89b-12d3-a456-426614174005",
+                    "name": "Geek T-Shirt",
+                    "quantity": 2,
+                    "price": 50.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b15",
+                    "name": "Joystick Nintendo Switch",
+                    "quantity": 2,
+                    "price": 89.99
+                }
+            ]
+        },
+        {
+            "id": "66163224-c5d5-418b-9e8c-0512d75c992a",
+            "createdAt": "2020-01-01T00:00:00Z",
+            "updatedAt": "2020-01-01T00:00:00Z",
+            "status": "ON_GOING",
+            "items": [
+                {
+                    "id": "2521f9cc-d7eb-43e6-a06a-33bdd3e5543d",
+                    "name": "Mario Kart 8 Deluxe - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                },
+                {
+                    "id": "d9837426-beed-4d12-b2dd-45d72f1622bc",
+                    "name": "Mario Wonder - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                }
+            ]
+        }
+    ],
+    "createdAt": "2020-01-01T00:00:00Z",
+    "updatedAt": "2020-01-01T00:00:00Z"
+}

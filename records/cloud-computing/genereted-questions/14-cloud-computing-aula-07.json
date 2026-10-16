@@ -1,0 +1,32 @@
+{
+  "id": "2f1241720ed94bd79bdc0ae80ceaa24f",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Para criar uma **Azure Pipeline** no **Azure DevOps**, podemos utilizar um arquivo **YAML** armazenado no repositorio.",
+    "",
+    "Essa afirmativa é verdadeira ou falsa?"
+  ],
+  "alternatives": [
+    {
+      "id": "7a33d719-7f19-4c8b-a753-bb565ff20d1c",
+      "text": "Verdadeira",
+      "feedback": "Correto!\nO Azure Pipelines dá suporte a uma ampla variedade de idiomas, plataformas e ferramentas e oferece dois tipos de pipelines para escolher: editores de pipeline clássicos e baseados em YAML.",
+      "correct": true
+    },
+    {
+      "id": "4db1ea31-b5ef-4a4c-b195-e3ae851ebe90",
+      "text": "Falsa",
+      "feedback": "Errado!\nO Azure Pipelines dá suporte a uma ampla variedade de idiomas, plataformas e ferramentas e oferece dois tipos de pipelines para escolher: editores de pipeline clássicos e baseados em YAML.",
+      "correct": false
+    }
+  ]
+}

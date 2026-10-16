@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-top: 50px;
+        }
+        p {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Home</h1>
+    <p>Welcome DevOps Ada Tech!</p>
+    <p>Este site e do <b>Everton Novo Site</b> - O que voce acha?</p>
+    <div>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0WsQN8TBSRT-tnk52oQkOrFBul-frH-zhuQ&s" alt="DevOps Legais"  width="200px" height="200px" />
+    </div>
+    <div>
+        <img src="https://miro.medium.com/v2/resize:fit:1004/1*8RE4treRCOnLeFsSlHZxrw.png" alt="Resources" width="200px" height="200px" />
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="input-field col s12">
+                <input id="input_text" type="text" class="validate">
+                <label for="input_text">A aula do Everton da Ada e muito legal!</label>
+            </div>
+
+            <ul class="collapsible">
+                <li>
+                  <div class="collapsible-header"><i class="material-icons">filter_drama</i>First</div>
+                  <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                </li>
+                <li>
+                  <div class="collapsible-header"><i class="material-icons">place</i>Second</div>
+                  <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                </li>
+                <li>
+                  <div class="collapsible-header"><i class="material-icons">whatshot</i>Third</div>
+                  <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                </li>
+              </ul>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.collapsible');
+            var instances = M.Collapsible.init(elems, options);
+        });
+
+        // Or with jQuery
+
+        $(document).ready(function(){
+            $('.collapsible').collapsible();
+        });
+    </script>
+</body>
+</html>

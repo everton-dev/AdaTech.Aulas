@@ -1,0 +1,36 @@
+{
+  "id": "f8d76d3e4e3e4bada9409508b4326f19",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O que é um grupo de recursos?"
+  ],
+  "alternatives": [
+    {
+      "id": "64ac5688-03a9-4ee6-b380-c604a3c20b0a",
+      "text": "Um grupo de recursos é um contêiner que mantém os recursos relacionados a uma solução do Azure.",
+      "feedback": "O grupo de recursos pode incluir todos os recursos para a solução ou apenas os recursos que você deseja gerenciar como um grupo. Você decide como deseja alocar recursos para grupos de recursos com base no que faz mais sentido para sua organização.",
+      "correct": true
+    },
+    {
+      "id": "cbfacfd5-6285-44e3-b0e2-61c1126115d3",
+      "text": "Um grupo de recursos é um contêiner que mantém as subscriptions relacionados a uma solução do Azure.",
+      "feedback": "Na verdade quem contem às subscriptions são os grupos de gerenciamento, que ajudam você a gerenciar acesso, política e conformidade para várias assinaturas. Todas as assinaturas em um grupo de gerenciamento herdam automaticamente as condições que são aplicadas ao grupo de gerenciamento.",
+      "correct": false
+    },
+    {
+      "id": "81b58016-8e2b-4a23-9121-713a18bfc405",
+      "text": "É o nome dado aos recursos do Azure",
+      "feedback": "O nome dado aos recursos do Azure é recurso mesmo.",
+      "correct": false
+    }
+  ]
+}

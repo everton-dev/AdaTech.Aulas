@@ -1,0 +1,32 @@
+{
+  "id": "26c43618ed6e42588c4614d61f132c58",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O **Bicep** é uma linguagem específica de domínio (DSL) que usa sintaxe declarativa para implantar recursos do Azure. Em um arquivo Bicep, você define a infraestrutura que deseja implantar no Azure e, em seguida, usa esse arquivo durante todo o ciclo de vida de desenvolvimento para implantar repetidamente a sua infraestrutura.",
+    "",
+    "Essa afirmação é verdadeira ou falsa?"
+  ],
+  "alternatives": [
+    {
+      "id": "2067f770-f943-4036-b49a-c62fe50498b3",
+      "text": "Verdadeira",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "b848d730-ed87-432b-9ad5-4a3e18d322ad",
+      "text": "Falsa",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

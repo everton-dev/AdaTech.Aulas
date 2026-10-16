@@ -1,0 +1,44 @@
+{
+  "id": "cc534c600d5e492e8a088c8db254fdae",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Processo automatizado que permite a integração frequente do código no repositório compartilhado, onde cada commit dispara a execução de testes automatizados para garantir a qualidade.",
+    "",
+    "Essa é a descrição de:"
+  ],
+  "alternatives": [
+    {
+      "id": "f701b204-86c3-4674-9918-f6760649d810",
+      "text": "Entrega Contínua (Continuous Delivery)",
+      "feedback": "Errado!\n",
+      "correct": false
+    },
+    {
+      "id": "0f4a018a-8510-4bc6-a297-531ea221c482",
+      "text": "Implantação Contínua (Continuous Deployment)",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "8a952e32-d020-49cd-bf01-bfbf5668f3fa",
+      "text": "Integração Contínua (CI)",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "9061b80c-2f14-49e0-be6f-81decaf80062",
+      "text": "Implantação Contínua (CD)",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

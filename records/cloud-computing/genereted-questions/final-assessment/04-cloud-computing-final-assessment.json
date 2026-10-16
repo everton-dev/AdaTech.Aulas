@@ -1,0 +1,36 @@
+{
+  "id": "ea47717d9f8c4adfa4b27f50c8fac503",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Para provisionar uma Storage Account com um container dentro dela chamado \"meu-container\", que sequencia de comandos eu devo executar?"
+  ],
+  "alternatives": [
+    {
+      "id": "01225d4a-34b8-4ad2-94ed-a7a2d7dc229b",
+      "text": "```\naz login\naz storage account create --name wp-account  --location centralus --resource-group wp-rg  --sku Standard_LRS\naz storage container create --name meu-conteiner --account-name wp-account\n```",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "b97256b9-e201-4b3c-8d29-2ad467d408e0",
+      "text": "```\naz login\naz storage account create --location centralus --resource-group wp-rg  --sku Standard_LRS\naz storage container create --account-name wp-account\n```",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "008c3fca-70cb-4088-83b6-b74b36f97fdf",
+      "text": "```\naz login\naz storage account create --name wp-account  --location centralus --resource-group wp-rg  --sku Standard_LRS\naz storage container create --name nosso-conteiner --account-name wp-account\n```",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

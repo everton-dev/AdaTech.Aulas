@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 420" role="img" aria-labelledby="title desc">
+  <title id="title">Nginx servindo uma página personalizada</title>
+  <desc id="desc">Um servidor conectado a uma janela de navegador com sinal de sucesso.</desc>
+  <rect width="520" height="420" rx="32" fill="#ffffff"/>
+  <g fill="none" stroke="#b11f4b" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="62" y="78" width="396" height="258" rx="20"/>
+    <path d="M62 138h396M115 108h2m42 0h2m42 0h2"/>
+    <path d="M165 239h56l38-68 54 120 35-52h25"/>
+    <circle cx="382" cy="239" r="54" fill="#ffffff"/>
+    <path d="m356 240 18 18 36-42"/>
+  </g>
+  <path d="M178 370h164" fill="none" stroke="#b11f4b" stroke-width="12" stroke-linecap="round"/>
+</svg>

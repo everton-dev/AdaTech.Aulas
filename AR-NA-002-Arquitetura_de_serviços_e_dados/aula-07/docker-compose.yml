@@ -1,0 +1,76 @@
+services:
+  transaction-db:
+    build:
+      context: ./db-transaction
+    container_name: geek-transaction-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: "Admin@12345"
+    ports:
+      - "14331:1433"
+    volumes:
+      - transaction_data:/var/opt/mssql
+    networks:
+      - data-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  analytics-db:
+    build:
+      context: ./db-analytics
+    container_name: geek-analytics-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: "Admin@12345"
+    ports:
+      - "14332:1433"
+    volumes:
+      - analytics_data:/var/opt/mssql
+    networks:
+      - data-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  dashboard:
+    build:
+      context: ..
+      dockerfile: aula-07/dashboard/Dockerfile
+    container_name: geek-analytics-dashboard
+    environment:
+      PORT: 8080
+      ANALYTICS_DB_HOST: analytics-db
+      ANALYTICS_DB_PORT: 1433
+      ANALYTICS_DB_NAME: analytics_db
+      DB_USER: everton
+      DB_PASSWORD: "@da123*"
+    ports:
+      - "8080:8080"
+    depends_on:
+      analytics-db:
+        condition: service_healthy
+    networks:
+      - data-network
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:8080/health').then(response => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  transaction_data:
+  analytics_data:
+
+networks:
+  data-network:
+    name: geek-data-network

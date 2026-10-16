@@ -1,0 +1,102 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_adatech_vm_name": {
+            "defaultValue": "adatech-vm",
+            "type": "String"
+        },
+        "disks_adatech_vm_OsDisk_1_e910f7cd87984b9eabcc225d438a62d8_externalid": {
+            "defaultValue": "/subscriptions/b4354e80-4e24-4f27-ae1c-5e082f59bf73/resourceGroups/azure-for-devs/providers/Microsoft.Compute/disks/adatech-vm_OsDisk_1_e910f7cd87984b9eabcc225d438a62d8",
+            "type": "String"
+        },
+        "networkInterfaces_adatech_vm731_externalid": {
+            "defaultValue": "/subscriptions/b4354e80-4e24-4f27-ae1c-5e082f59bf73/resourceGroups/azure-for-devs/providers/Microsoft.Network/networkInterfaces/adatech-vm731",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2024-07-01",
+            "name": "[parameters('virtualMachines_adatech_vm_name')]",
+            "location": "eastus2",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "additionalCapabilities": {
+                    "hibernationEnabled": false
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "canonical",
+                        "offer": "ubuntu-24_04-lts",
+                        "sku": "server",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_adatech_vm_name'), '_OsDisk_1_e910f7cd87984b9eabcc225d438a62d8')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "StandardSSD_LRS",
+                            "id": "[parameters('disks_adatech_vm_OsDisk_1_e910f7cd87984b9eabcc225d438a62d8_externalid')]"
+                        },
+                        "deleteOption": "Delete",
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": [],
+                    "diskControllerType": "SCSI"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_adatech_vm_name')]",
+                    "adminUsername": "azureuser",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "/home/azureuser/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDQqIlLmDTmhAD0j5QLHR9aVjfrcPL9lM4Cy85QtNa7P7KW441Pv18GAf7njVnPnh5IB6QL9oLnDlT6a5xSHar4lVyBgTsfogwtr7aWdQQhdI1iS+T3Kn4yOuGpLfDzZJZpavyAdIsByDc2r1x2TRMgRnBcGxfsjVb0VZP2bqF1teWhUdFpA5aJ04PsLcvaLMIfeeCM9NOkLQeMymjAhLuj0IK7c6Wpsmx1vrH0Vh7immG26lRGzm4qPnyuZP94Vr+AgpX6ex7p0CMoQYb33j08n86Qn3KC0Hq10+bpLt57TfFd/F2BJnUf+aeYVJc0ZrP/cJop6SxJotc8JCXS1e6nsAB9v+slAVcDhy2jabNliCPG1DcoTb/AeH4c4Xi5QEGMJxC0Yi1YrkwaV3UZ1iD5bluTKcsHwIWcw41zNA9pygQrXjoQnmkaorBWQQ2fn1pfMk+Km4HM31WrOijJ4how1ZlIGj2sRu4YoJYD2lZZeLr4QFTWpXDfKWVri7EOUsU= generated-by-azure"
+                                }
+                            ]
+                        },
+                        "provisionVMAgent": true,
+                        "patchSettings": {
+                            "patchMode": "ImageDefault",
+                            "assessmentMode": "ImageDefault"
+                        }
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "securityProfile": {
+                    "uefiSettings": {
+                        "secureBootEnabled": true,
+                        "vTpmEnabled": true
+                    },
+                    "securityType": "TrustedLaunch"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('networkInterfaces_adatech_vm731_externalid')]",
+                            "properties": {
+                                "deleteOption": "Delete"
+                            }
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            }
+        }
+    ]
+}

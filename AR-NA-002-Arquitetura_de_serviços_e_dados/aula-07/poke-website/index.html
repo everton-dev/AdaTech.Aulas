@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PokeDex Explorer</title>
+    <script>
+      (() => {
+        const param = new URLSearchParams(window.location.search).get("scoutTheme");
+        const theme =
+          param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#/" aria-label="Voltar para a lista de Pokemon">
+        <span class="brand-mark" aria-hidden="true"><i data-lucide="orbit"></i></span>
+        <span>
+          <strong>PokeDex</strong>
+          <small>Explorer</small>
+        </span>
+      </a>
+      <nav class="header-actions" aria-label="Ações do site">
+        <a href="#/" class="text-action"><i data-lucide="layout-grid"></i> Catálogo</a>
+        <button class="icon-button" id="theme-button" type="button" aria-label="Alternar tema" title="Alternar tema"><i data-lucide="sun-moon"></i></button>
+      </nav>
+    </header>
+
+    <main id="app" aria-live="polite"></main>
+
+    <template id="loading-template">
+      <section class="state-panel" aria-label="Carregando dados">
+        <i data-lucide="loader-circle" class="spinner"></i>
+        <p>Consultando a PokeAPI...</p>
+      </section>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>

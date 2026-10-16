@@ -1,0 +1,36 @@
+{
+  "id": "cb7c2ef1f90d4593b7f45bd73a36fc0a",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Qual modelo de nuvem usa alguns datacenters focados em fornecer serviços de nuvem para quem quiser e alguns data centers que estão focados em um único cliente?"
+  ],
+  "alternatives": [
+    {
+      "id": "ed370c77-5beb-4334-ab64-f5b846d3dda6",
+      "text": "Nuvem pública",
+      "feedback": "O modelo de **nuvem pública** fornece serviços de nuvem para praticamente qualquer pessoa interessada em usar os serviços de nuvem. Os datacenters são dedicados a qualquer pessoa que consuma recursos de nuvem e não a um único cliente.",
+      "correct": false
+    },
+    {
+      "id": "2f4857fe-d067-48f6-8ba2-33d166d94daf",
+      "text": "Nuvem híbrida",
+      "feedback": "O modelo de **nuvem híbrida** é uma combinação de nuvem pública e nuvem privada, usando datacenters dedicados exclusivamente a um cliente e datacenters que são compartilhados com o público.",
+      "correct": true
+    },
+    {
+      "id": "f10b4439-4eff-4fd8-838d-ece4985fe1d1",
+      "text": "Multinuvem",
+      "feedback": "O modelo **multinuvem** utiliza vários provedores de nuvem pública para atender às necessidades da nuvem.",
+      "correct": false
+    }
+  ]
+}

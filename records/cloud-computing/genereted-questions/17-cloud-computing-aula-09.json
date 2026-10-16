@@ -1,0 +1,36 @@
+{
+  "id": "0262f0448ccd455daffc056aed1a08df",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O que é **NSG** (Network Security Groups)?"
+  ],
+  "alternatives": [
+    {
+      "id": "80657e99-6a10-4980-8a3e-4c8aaf210bd2",
+      "text": "Um grupo de segurança de rede (NSG) contém regras de segurança que permitem ou negam o tráfego de rede de entrada ou de saída em relação a vários tipos de recursos do Azure.",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "51afed59-b69e-4f5e-8781-3257f6ecd058",
+      "text": "Um grupo de segurança de rede (NSG) contém regras de segurança que permitem ou negam a autenticação e autorização em relação a vários tipos de recursos do Azure.",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "8304c1a6-62db-4028-9bb0-79cc960f0748",
+      "text": "Um grupo de segurança de rede (NSG) contém regras de segurança que permitem ou negam o tráfego de rede de entrada ou de saída no Firewall do Azure.",
+      "feedback": "Errado",
+      "correct": false
+    }
+  ]
+}

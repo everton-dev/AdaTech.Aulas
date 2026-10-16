@@ -1,0 +1,36 @@
+{
+  "id": "fd7f754b661844dfa6fa6501d5ef4594",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O que é o banco de dados do **Azure** para **MySQL**?"
+  ],
+  "alternatives": [
+    {
+      "id": "ecc18da7-38f2-4c14-a03e-18e5e3915e36",
+      "text": "É um serviço de banco de dados não-relacional totalmente gerenciado e pronto para produção na Nuvem da Microsoft.",
+      "feedback": "**Errado!**\nO serviço de banco de dados **não** é **não-relacional** ele é **relacional**.",
+      "correct": false
+    },
+    {
+      "id": "9c061200-029a-4119-af9e-1d3f6b7f1b1b",
+      "text": "É um serviço de banco de dados não-relacional de grafo totalmente gerenciado e pronto para produção na Nuvem da Microsoft.",
+      "feedback": "**Errado!**\nO serviço de banco de dados **não** é **não-relacional de grafo** ele é **relacional**.",
+      "correct": false
+    },
+    {
+      "id": "70e3a9bd-848f-402f-bb39-cb3e9ffcd3fb",
+      "text": "É um serviço de banco de dados relacional totalmente gerenciado e pronto para produção na Nuvem da Microsoft.",
+      "feedback": "Correto!\nÉ um serviço de banco de dados **relacional**.",
+      "correct": true
+    }
+  ]
+}

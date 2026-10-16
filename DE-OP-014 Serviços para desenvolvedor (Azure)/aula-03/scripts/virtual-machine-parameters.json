@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_adatech_vm_name": {
+            "value": null
+        },
+        "disks_adatech_vm_OsDisk_1_e910f7cd87984b9eabcc225d438a62d8_externalid": {
+            "value": null
+        },
+        "networkInterfaces_adatech_vm731_externalid": {
+            "value": null
+        }
+    }
+}

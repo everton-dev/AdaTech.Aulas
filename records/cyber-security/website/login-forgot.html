@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esqueci Minha Senha</title>
+    <!-- Importando o CSS do Materialize -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <!-- Importando a biblioteca de ícones do Materialize -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .header-logo {
+            height: 50px;
+            margin: 10px 0;
+        }
+        .forgot-password-container {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-wrapper blue darken-4">
+                <a href="#" class="brand-logo center">
+                    <img src="images/help-desk.png" alt="Logo da Empresa" class="header-logo">
+                </a>
+            </div>
+        </nav>
+    </header>
+    <div class="container forgot-password-container">
+        <div class="row">
+            <div class="col s12 m6 offset-m3">
+                <h3 class="center-align">Esqueci minha senha</h3>
+                <div class="card">
+                    <div class="card-content">
+                        <form id="forgot-password-form">
+                            <div class="input-field">
+                                <input id="full-name" type="text" class="validate">
+                                <label for="full-name">Nome completo</label>
+                            </div>
+                            <div class="input-field">
+                                <input id="email" type="email" class="validate">
+                                <label for="email">E-mail</label>
+                            </div>
+                            <div class="input-field">
+                                <input id="address" type="text" class="validate">
+                                <label for="address">Endereço completo</label>
+                            </div>
+                            <div class="input-field">
+                                <input id="phone" type="tel" class="validate">
+                                <label for="phone">Telefone</label>
+                            </div>
+                            <div class="center-align">
+                                <button class="btn waves-effect waves-light" type="submit">Enviar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-action center-align">
+                        <a href="login.html" class="btn-flat waves-effect waves-light">Voltar para Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Importando o JavaScript do Materialize -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.getElementById('forgot-password-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            M.toast({
+                html: '<i class="material-icons left">check_circle</i> As informações foram enviadas. Em alguns minutos você receberá um e-mail para alterar a senha.',
+                classes: 'rounded green darken-4 white-text',
+                displayLength: 5000
+            });
+        });
+    </script>
+</body>
+</html>

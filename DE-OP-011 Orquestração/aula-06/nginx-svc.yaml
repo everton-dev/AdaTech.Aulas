@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: aplicacao
+  labels:
+    run: nginx
+spec:
+  type: NodePort
+  ports:
+  - nodePort: 31756   # porta exposta no node
+    port: 80          # porta do Service
+    protocol: TCP
+    targetPort: 80    # porta do container
+  selector:
+    run: nginx        # seleciona os Pods com esta label

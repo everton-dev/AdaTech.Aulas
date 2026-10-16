@@ -1,0 +1,36 @@
+{
+  "id": "1acd0570d9314734b016a6b3fe22db16",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Para acessar a minha máquina virtual provisionada no Azure com autenticação **SSH** qual o comando que devemos executar para acessá-la?"
+  ],
+  "alternatives": [
+    {
+      "id": "61a66916-6282-49a9-a554-0d31d79ddbbf",
+      "text": "```\n$ sudo systemctl start nginx\n```",
+      "feedback": "**Errado! **\nEste comando é para iniciar o serviço Nginx.",
+      "correct": false
+    },
+    {
+      "id": "4953fc2f-558c-4141-b004-2577f73b244b",
+      "text": "```\n$ ssh azureuser@IP-da-VM\n```",
+      "feedback": "**Errado!**\nÉ quase este comando, mas ele está incompleto o correto seria:\n```\n$ ssh -i /caminho/para/sua/chave.pem azureuser@IP-da-VM\n```",
+      "correct": false
+    },
+    {
+      "id": "bf33789c-66ce-4151-869b-b54f64c4ad30",
+      "text": "```\n$ ssh -i /caminho/para/sua/chave.pem azureuser@IP-da-VM\n```",
+      "feedback": "**Correto!**\nDessa forma você consegue acessar com autenticação SSH, a sua máquina virtual provisionada no Azure via terminal.",
+      "correct": true
+    }
+  ]
+}

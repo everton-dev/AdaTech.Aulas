@@ -1,0 +1,14 @@
+# artefatos gerados pelos run.sh
+node_modules/
+.venv/
+*.cdx.json
+*.spdx.json
+sbom*.json
+cosign.key
+cosign.pub
+err.txt
+Dockerfile.tampered
+Dockerfile.inseguro
+Aula_02/Dockerfile
+Aula_06/python/
+Aula_08/api-pagamentos/relatorios/

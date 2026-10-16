@@ -1,0 +1,29 @@
+name: Policy Gate
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  policy-check:
+    runs-on: ubuntu-latest
+    steps:
+      # Actions fixadas por SHA de commit (nao por tag) — supply chain do proprio pipeline
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Install OPA
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          chmod +x opa && sudo mv opa /usr/local/bin/
+
+      - name: Install Conftest
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/open-policy-agent/conftest/releases/latest | grep tag_name | cut -d '"' -f 4)
+          curl -LO "https://github.com/open-policy-agent/conftest/releases/download/${LATEST}/conftest_${LATEST#v}_Linux_x86_64.tar.gz"
+          tar xzf conftest_*.tar.gz && sudo mv conftest /usr/local/bin/
+
+      - name: Unit tests das politicas
+        run: opa test policies/ -v
+
+      - name: Conftest em manifests Kubernetes
+        run: conftest test manifests/*.yaml --policy policies/kubernetes/

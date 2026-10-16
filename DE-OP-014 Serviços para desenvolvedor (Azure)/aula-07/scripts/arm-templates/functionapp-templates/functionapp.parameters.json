@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccountName": {
+            "value": "adatechstorage"
+        },
+        "functionAppName": {
+            "value": "adatech-cars"
+        },
+        "functionsVersion": {
+            "value": "4"
+        },
+        "location": {
+            "value": "brazilsouth"
+        },
+        "skuStorage": {
+            "value": "Standard_LRS"
+        },
+        "sqlServerName": {
+            "value": "adatechsrv"
+        },
+        "sqlServerDatabaseName": {
+            "value": "AdaTechDb"
+        },
+        "sqlServerDatabaseUser": {
+            "value": "ada"
+        },
+        "sqlServerDatabasePassword": {
+            "value": "@datech123"
+        }
+    }
+}

@@ -1,0 +1,179 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccountName": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 24,
+            "metadata": {
+                "description": "Name of the storage account. Must be globally unique and contain only lowercase letters and numbers."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for the storage account. Defaults to resource group location."
+            }
+        },
+        "storageAccountSku": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Standard_ZRS",
+                "Premium_LRS",
+                "Premium_ZRS",
+                "Standard_GZRS",
+                "Standard_RAGZRS"
+            ],
+            "metadata": {
+                "description": "SKU for the storage account. Determines replication and performance tier."
+            }
+        },
+        "storageAccountKind": {
+            "type": "string",
+            "defaultValue": "StorageV2",
+            "allowedValues": [
+                "Storage",
+                "StorageV2",
+                "BlobStorage",
+                "FileStorage",
+                "BlockBlobStorage"
+            ],
+            "metadata": {
+                "description": "Kind of storage account. StorageV2 is recommended for most scenarios."
+            }
+        },
+        "publicNetworkAccess": {
+            "type": "string",
+            "defaultValue": "Enabled",
+            "allowedValues": [
+                "Enabled",
+                "Disabled"
+            ],
+            "metadata": {
+                "description": "Whether to allow public network access to the storage account."
+            }
+        },
+        "enableHttpsTrafficOnly": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Whether to allow only HTTPS traffic to the storage account."
+            }
+        },
+        "minimumTlsVersion": {
+            "type": "string",
+            "defaultValue": "TLS1_2",
+            "allowedValues": [
+                "TLS1_0",
+                "TLS1_1",
+                "TLS1_2"
+            ],
+            "metadata": {
+                "description": "Minimum TLS version for secure requests to the storage account."
+            }
+        },
+        "tags": {
+            "type": "object",
+            "defaultValue": {
+                "Environment": "Development",
+                "Purpose": "General Storage"
+            },
+            "metadata": {
+                "description": "Tags to apply to the storage account resource."
+            }
+        }
+    },
+    "variables": {
+        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2023-01-01",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('tags')]",
+            "sku": {
+                "name": "[parameters('storageAccountSku')]"
+            },
+            "kind": "[parameters('storageAccountKind')]",
+            "properties": {
+                "accessTier": "Hot",
+                "supportsHttpsTrafficOnly": "[parameters('enableHttpsTrafficOnly')]",
+                "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+                "allowBlobPublicAccess": false,
+                "allowSharedKeyAccess": false,
+                "allowCrossTenantReplication": false,
+                "networkAcls": {
+                    "defaultAction": "Allow",
+                    "bypass": "AzureServices"
+                },
+                "encryption": {
+                    "services": {
+                        "blob": {
+                            "enabled": true,
+                            "keyType": "Account"
+                        },
+                        "file": {
+                            "enabled": true,
+                            "keyType": "Account"
+                        },
+                        "queue": {
+                            "enabled": true,
+                            "keyType": "Service"
+                        },
+                        "table": {
+                            "enabled": true,
+                            "keyType": "Service"
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "storageAccountId": {
+            "type": "string",
+            "value": "[variables('storageAccountId')]",
+            "metadata": {
+                "description": "Resource ID of the created storage account."
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "value": "[parameters('storageAccountName')]",
+            "metadata": {
+                "description": "Name of the created storage account."
+            }
+        },
+        "primaryEndpoints": {
+            "type": "object",
+            "value": "[reference(variables('storageAccountId')).primaryEndpoints]",
+            "metadata": {
+                "description": "Primary endpoints for the storage account services."
+            }
+        },
+        "primaryBlobEndpoint": {
+            "type": "string",
+            "value": "[reference(variables('storageAccountId')).primaryEndpoints.blob]",
+            "metadata": {
+                "description": "Primary blob endpoint URL."
+            }
+        },
+        "storageAccountKeys": {
+            "type": "object",
+            "value": "[listKeys(variables('storageAccountId'), '2023-01-01')]",
+            "metadata": {
+                "description": "Storage account access keys. Handle with care for security."
+            }
+        }
+    }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "94ec7aa9bd444eb585caba1c7a840473",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O que é Controle Acesso Baseado em Função do Azure (**RBAC**)?"
+  ],
+  "alternatives": [
+    {
+      "id": "f35f660b-ea44-46c6-a893-9f8c734c8dfc",
+      "text": "O RBAC do Azure ajuda a gerenciar quem tem acesso ao portal do Azure, o que pode fazer no portal e a quais áreas tem acesso.",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "a78489b4-1b21-4fdc-b66c-375ef0d33bb0",
+      "text": "O RBAC do Azure ajuda a gerenciar quem tem acesso aos recursos do Azure, o que pode fazer com esses recursos e a quais áreas tem acesso.",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "93da0f33-278f-451f-a111-c732d3593fc5",
+      "text": "O RBAC do Azure ajuda a gerenciar quem tem acesso ao Azure DevOps, o que pode fazer criar dentro dele e a quais áreas tem acesso.",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

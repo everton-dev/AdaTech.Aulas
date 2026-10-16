@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccountName": {
+            "value": "adatechstorage001"
+        },
+        "location": {
+            "value": "East US"
+        },
+        "storageAccountSku": {
+            "value": "Standard_LRS"
+        },
+        "storageAccountKind": {
+            "value": "StorageV2"
+        },
+        "publicNetworkAccess": {
+            "value": "Enabled"
+        },
+        "enableHttpsTrafficOnly": {
+            "value": true
+        },
+        "minimumTlsVersion": {
+            "value": "TLS1_2"
+        },
+        "tags": {
+            "value": {
+                "Environment": "Development",
+                "Purpose": "General Storage",
+                "Project": "AdaTech",
+                "Owner": "Everton"
+            }
+        }
+    }
+}

@@ -1,0 +1,17 @@
+meta {
+  name: Update
+  type: http
+  seq: 5
+}
+
+put {
+  url: https://function-app-projeto-final.azurewebsites.net/api/produtos/44
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "nome": "everton test updated"
+  }
+}

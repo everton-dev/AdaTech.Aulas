@@ -1,0 +1,36 @@
+{
+  "id": "c6df4b24f3474f56bc52476792ac9a90",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O que é a computação em nuvem?"
+  ],
+  "alternatives": [
+    {
+      "id": "2df18832-f548-4c1e-a246-909535404a2b",
+      "text": "Entrega de serviços de computação pela Internet.",
+      "feedback": "A computação em nuvem é a entrega de serviços de computação pela Internet.",
+      "correct": true
+    },
+    {
+      "id": "6774efc0-5e28-4791-b1ad-b48e977f0e87",
+      "text": "Entrega de serviços de armazenamento pela Internet.",
+      "feedback": "Embora os serviços de armazenamento sejam um componente da computação em nuvem, a computação em nuvem é muito mais ampla.",
+      "correct": false
+    },
+    {
+      "id": "dce5a6b9-b619-4feb-a2cf-c6cf72bc49d2",
+      "text": "Disponibilização de sites acessíveis pela Internet.",
+      "feedback": "A hospedagem na Web pode ser feita na nuvem, mas a hospedagem na Web em si não engloba o significado completo da computação em nuvem.",
+      "correct": false
+    }
+  ]
+}

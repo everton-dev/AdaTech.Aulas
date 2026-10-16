@@ -1,0 +1,25 @@
+services:
+  apiserver:
+    image: dependencytrack/apiserver:4.12.7
+    ports:
+      - "8081:8080"
+    volumes:
+      - dt-data:/data
+    environment:
+      # O apiserver RECUSA iniciar com menos de 4 GB de heap (RequirementsVerifier).
+      # Garanta >= 6 GB de RAM para o Docker Desktop (Settings > Resources, ou .wslconfig).
+      JAVA_OPTIONS: "-Xmx4g"
+    restart: unless-stopped
+
+  frontend:
+    image: dependencytrack/frontend:4.12.7
+    ports:
+      - "8080:8080"
+    environment:
+      API_BASE_URL: "http://localhost:8081"
+    depends_on:
+      - apiserver
+    restart: unless-stopped
+
+volumes:
+  dt-data: {}

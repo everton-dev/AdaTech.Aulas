@@ -1,0 +1,42 @@
+{
+  "id": "d0a44f50828340d9aa67659fac8b7bd5",
+  "type": "MULT",
+  "language": "",
+  "level": "Basic",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Em um cenário onde uma empresa busca otimizar seu atendimento ao cliente, um sistema de IA é implementado para responder perguntas frequentes e direcionar os clientes para os setores adequados. Qual tipo de IA é mais adequado para essa função?"
+  ],
+  "alternatives": [
+    {
+      "id": "0f6e8cb2-98e5-4729-bb57-0fd7a4a97eeb",
+      "text": "IA Generativa",
+      "feedback": "Incorreto. A IA Generativa é especializada em criar conteúdo original, como textos e imagens, e não é a mais adequada para responder perguntas frequentes.",
+      "correct": false
+    },
+    {
+      "id": "771467d9-403f-463c-b91a-fe26e38bc209",
+      "text": "IA Analítica",
+      "feedback": "Incorreto. A IA Analítica é focada em analisar dados para identificar padrões e tendências, o que não se encaixa na função de atendimento ao cliente.",
+      "correct": false
+    },
+    {
+      "id": "5a4ff403-948d-4ca5-a606-7f6fb007137b",
+      "text": "IA de Aprendizado por Reforço",
+      "feedback": "Incorreto. A IA de Aprendizado por Reforço aprende por tentativa e erro, o que pode não ser ideal para um sistema de atendimento ao cliente, onde respostas precisas e confiáveis são necessárias desde o início.",
+      "correct": false
+    },
+    {
+      "id": "cc6fb2c3-7732-401f-bd52-8010749e1bc6",
+      "text": "IA de Aprendizado Supervisionado",
+      "feedback": "Correto. A IA de Aprendizado Supervisionado é treinada com um conjunto de dados rotulados (perguntas e respostas), permitindo que ela aprenda a associar perguntas específicas a respostas adequadas. Isso a torna ideal para sistemas de atendimento ao cliente, onde o objetivo é fornecer respostas precisas e relevantes.",
+      "correct": true
+    }
+  ]
+}

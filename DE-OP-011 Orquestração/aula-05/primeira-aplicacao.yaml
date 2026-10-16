@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: primeira-aplicacao
+  namespace: aplicacao      # namespace dedicado
+  labels:
+    app: ruby
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ruby
+  template:
+    metadata:
+      labels:
+        app: ruby
+    spec:
+      containers:
+      - name: primeira-aplicacao
+        image: evertondevbr/primeira-aplicacao:1.0  # sua imagem
+        ports:
+        - containerPort: 80

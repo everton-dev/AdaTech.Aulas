@@ -1,0 +1,36 @@
+{
+  "id": "038ca36cfd7e40f8a350f087f9f74e5a",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Com Azure CLI que comando devo executar para fazer login no terminal local?"
+  ],
+  "alternatives": [
+    {
+      "id": "d68ac50a-16df-4759-aeae-221095a53514",
+      "text": "```\nlogin az\n```",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "5c35a671-03de-4576-ade3-defe11462aa2",
+      "text": "```\naz azure login\n```",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "f1509bd8-04b4-4515-80bb-c73cd86c1980",
+      "text": "```\naz login\n```",
+      "feedback": "Correto!",
+      "correct": true
+    }
+  ]
+}

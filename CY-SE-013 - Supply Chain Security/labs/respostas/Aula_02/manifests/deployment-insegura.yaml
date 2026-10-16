@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-insegura
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: ubuntu:latest
+          securityContext:
+            runAsUser: 0
+          resources:
+            limits:
+              cpu: "500m"
+          env:
+            - name: API_TOKEN
+              value: "hardcoded-token-123"

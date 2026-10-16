@@ -1,0 +1,5 @@
+Redes Globais
+Por exemplo, se um usuário em Londres acessa um serviço em Tóquio, o tráfego da Internet entrará em uma de nossas bordas em Londres, passará pela WAN da Microsoft pela França, nossos caminhos de Transarábia entre a Europa e a Índia e, em seguida, para o Japão, onde o serviço reside. O tráfego de resposta é simétrico. Essa viagem de dados é conhecida como roteamento cold potato. O tráfego permanece na rede da Microsoft o máximo possível antes de ser entregue.
+
+- Regions
+

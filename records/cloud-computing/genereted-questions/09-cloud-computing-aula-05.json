@@ -1,0 +1,30 @@
+{
+  "id": "a6617831acf64411909c30cbfe4764ee",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "A **infraestrutura como código** (IaC) usa a metodologia de DevOps e o controle de versão com um modelo descritivo para definir e implantar a infraestrutura, como redes, máquinas virtuais, balanceadores de carga e topologias de conexão. Assim como o mesmo código-fonte sempre gera o mesmo binário, um modelo IaC gera o mesmo ambiente sempre que ele é implantado."
+  ],
+  "alternatives": [
+    {
+      "id": "103831cb-a359-4359-ad0c-13a2126b0d56",
+      "text": "Verdadeiro",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "3ebaa521-3241-46fe-86ab-4f8ff5841c7c",
+      "text": "Falso",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

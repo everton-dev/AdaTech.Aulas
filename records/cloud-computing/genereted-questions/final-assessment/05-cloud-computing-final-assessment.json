@@ -1,0 +1,39 @@
+{
+  "id": "5443797b7730413997fba8d53d7d6249",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Para executarmos o Terraform em nossa máquina local devemos executar os comandos em sequencia:",
+    "",
+    "```",
+    "az login",
+    "terraform init",
+    "terraform plan",
+    "terraform apply –auto-approve ",
+    "```",
+    "",
+    ""
+  ],
+  "alternatives": [
+    {
+      "id": "dee5ece0-a5a7-46ce-aee9-07dfe2576597",
+      "text": "Verdadeiro",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "923208b9-ff4c-4bac-9ad3-4f0d5cb42ba0",
+      "text": "Falso",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

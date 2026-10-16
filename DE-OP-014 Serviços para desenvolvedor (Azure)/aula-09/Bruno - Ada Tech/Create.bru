@@ -1,0 +1,17 @@
+meta {
+  name: Create
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://function-app-projeto-final.azurewebsites.net/api/produtos
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "nome": "everton test"
+  }
+}

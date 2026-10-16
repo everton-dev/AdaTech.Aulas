@@ -1,0 +1,108 @@
+name: release
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  build-sign-attest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write      # OIDC para assinatura keyless
+      packages: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Policy gate (Rego) sobre Dockerfile, manifests e o proprio workflow
+        run: |
+          curl -sL -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static && chmod +x opa
+          ./opa test policies/ -v
+          curl -sL https://github.com/open-policy-agent/conftest/releases/download/v0.71.1/conftest_0.71.1_Linux_x86_64.tar.gz | tar xz
+          ./conftest test Dockerfile --policy policies/rego/image_baseline.rego --namespace supply.image
+          ./conftest test k8s/deployment.yaml --policy policies/rego/k8s_deployment.rego --namespace supply.k8s
+          ./conftest test .github/workflows/release.yml --policy policies/rego/pipeline_hardening.rego --namespace supply.pipeline
+
+      - uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349 # v3.7.1
+      - uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build e push
+        id: build
+        uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75 # v6.9.0
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+
+      - uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
+
+      - name: SBOM CycloneDX + SPDX
+        uses: anchore/sbom-action@fc46e51fd3cb168ffb36c6d1915723c47db58abb # v0.17.7
+        with:
+          image: ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
+          format: cyclonedx-json
+          output-file: sbom.cdx.json
+      - uses: anchore/sbom-action@fc46e51fd3cb168ffb36c6d1915723c47db58abb # v0.17.7
+        with:
+          image: ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
+          format: spdx-json
+          output-file: sbom.spdx.json
+
+      - name: Policy gate sobre o SBOM (licencas + campos obrigatorios)
+        run: |
+          ./conftest test sbom.cdx.json --policy policies/rego/sbom_required.rego --namespace supply.sbom
+          ./conftest test sbom.cdx.json --policy policies/rego/license_policy.rego --namespace supply.license
+
+      - name: Scan de vulnerabilidades (bloqueia CRITICAL/HIGH)
+        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # 0.29.0
+        with:
+          image-ref: ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
+          format: cosign-vuln
+          output: trivy.json
+          exit-code: 1
+          severity: CRITICAL,HIGH
+
+      - name: Enviar SBOM ao Dependency-Track
+        env: { DT_URL: "${{ secrets.DT_URL }}", DT_KEY: "${{ secrets.DT_API_KEY }}" }
+        run: |
+          curl -sf -X POST "$DT_URL/api/v1/bom" -H "X-Api-Key: $DT_KEY" \
+            -F autoCreate=true -F projectName=${{ github.repository }} -F projectVersion=${{ github.ref_name }} -F bom=@sbom.cdx.json
+
+      - name: Assinar imagem (keyless) e anexar atestacoes
+        env:
+          REF: ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
+        run: |
+          cosign sign --yes "$REF"
+          cosign attest --yes --type cyclonedx --predicate sbom.cdx.json "$REF"
+          cosign attest --yes --type spdxjson  --predicate sbom.spdx.json "$REF"
+          cosign attest --yes --type vuln      --predicate trivy.json    "$REF"
+
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: evidencias-${{ github.ref_name }}
+          path: |
+            sbom.cdx.json
+            sbom.spdx.json
+            trivy.json
+
+  provenance:
+    needs: build-sign-attest
+    permissions:
+      actions: read
+      id-token: write
+      packages: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v2.0.0
+    with:
+      image: ghcr.io/${{ github.repository }}
+      digest: ${{ needs.build-sign-attest.outputs.digest }}
+      registry-username: ${{ github.actor }}
+    secrets:
+      registry-password: ${{ secrets.GITHUB_TOKEN }}

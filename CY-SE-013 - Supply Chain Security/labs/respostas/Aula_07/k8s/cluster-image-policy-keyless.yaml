@@ -1,0 +1,22 @@
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: require-signed-images
+spec:
+  images:
+    - glob: "ghcr.io/empresa/**"
+  authorities:
+    - keyless:
+        url: https://fulcio.sigstore.dev
+        identities:
+          - issuer: https://token.actions.githubusercontent.com
+            subjectRegExp: "^https://github.com/empresa/.*"
+      ctlog:
+        url: https://rekor.sigstore.dev
+      attestations:
+        - name: must-have-provenance
+          predicateType: https://slsa.dev/provenance/v1
+        - name: must-have-sbom
+          predicateType: https://cyclonedx.org/bom
+# Ativar em um namespace:
+#   kubectl label namespace producao policy.sigstore.dev/include=true

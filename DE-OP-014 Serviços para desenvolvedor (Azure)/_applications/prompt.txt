@@ -1,0 +1,10 @@
+I have on SQL Database in Azure that contains a table called product, this table has only two columns, id (int) and name varchar(100).
+
+I wanna create a function app in python to connect in this database and run transactions CRUD, this function app must have 5 endpoints:
+- GetAll - GET - products
+- GetById - GET - products/{id}
+- Create - POST - products + body(json)
+- Update - PUT - products/{id} + body(json)
+- Delete - DELETE - products/{id}
+
+Please create this application with best practices

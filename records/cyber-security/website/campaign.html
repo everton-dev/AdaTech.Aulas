@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dados Pessoais</title>
+    <!-- Importando o CSS do Materialize -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <!-- Importando a biblioteca de ícones do Materialize -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .header-logo {
+            height: 50px;
+            margin: 10px 0;
+        }
+        .personal-data-container {
+            margin-top: 50px;
+        }
+        .mandatory {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-wrapper blue darken-4">
+                <a href="#" class="brand-logo center">
+                    <img src="images/help-desk.png" alt="Logo da Empresa" class="header-logo">
+                </a>
+            </div>
+        </nav>
+    </header>
+    <div class="container personal-data-container">
+        <div class="row">
+            <div class="col s12 m6 offset-m3">
+                <h3 class="center-align">Dados Pessoais</h3>
+                <div class="card">
+                    <div class="card-content">
+                        <form id="personal-data-form">
+                            <div class="input-field">
+                                <input id="full-name" type="text" class="validate" required>
+                                <label for="full-name">Nome completo</label>
+                            </div>
+                            <div class="input-field">
+                                <select id="shirt-size" required>
+                                    <option value="" disabled selected>Escolha o tamanho</option>
+                                    <option value="P">P</option>
+                                    <option value="M">M</option>
+                                    <option value="G">G</option>
+                                    <option value="GG">GG</option>
+                                    <option value="EGG">EGG</option>
+                                </select>
+                                <label for="shirt-size">Tamanho da camiseta</label>
+                            </div>
+                            <div class="input-field">
+                                <input id="address" type="text" class="validate" required>
+                                <label for="address">Endereço de entrega</label>
+                            </div>
+                            <div class="input-field">
+                                <input id="phone" type="tel" class="validate" required>
+                                <label for="phone">Telefone</label>
+                            </div>
+                            <div class="input-field">
+                                <input id="company-code" type="text" class="validate" required>
+                                <label for="company-code">Código da empresa</label>
+                            </div>
+                            <div class="center-align">
+                                <button class="btn waves-effect waves-light" type="submit">Enviar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-action center-align">
+                        <p>Para a campanha do dia da natureza, é necessário instalar o aplicativo da empresa. Este aplicativo trará todos os dias informações importantes sobre como ajudar o meio ambiente.</p>
+                        <p class="mandatory">A instalação desta ferramenta é obrigatória.</p>
+                        <a href="images/phishing.png" class="btn waves-effect waves-light">Baixar Aplicativo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Importando o JavaScript do Materialize -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('select');
+            var instances = M.FormSelect.init(elems);
+        });
+
+        document.getElementById('personal-data-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            M.toast({
+                html: '<i class="material-icons left">check_circle</i> As informações foram enviadas com sucesso.',
+                classes: 'rounded green darken-4 white-text',
+                displayLength: 5000
+            });
+        });
+    </script>
+</body>
+</html>

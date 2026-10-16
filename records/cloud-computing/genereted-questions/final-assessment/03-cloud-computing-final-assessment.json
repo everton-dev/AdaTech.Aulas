@@ -1,0 +1,30 @@
+{
+  "id": "6bca2440dbe9400ab235e0157a0cf38a",
+  "type": "MULT",
+  "language": "",
+  "level": "Medium",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O serviços de banco de dados **MySQL** do **Azure** pode oferecer escalabilidade, backups automáticos, alta disponibilidade e segurança integradas."
+  ],
+  "alternatives": [
+    {
+      "id": "10ffde8d-da76-4d25-be12-45c8cd2100ad",
+      "text": "Verdadeiro",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "da6e925e-5843-4c9f-ad47-63e2b888a1eb",
+      "text": "Falso",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "api-pagamentos",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node -e \"const a=require('./src/server.js');const s=a.listen(0,async()=>{const r=await fetch('http://localhost:'+s.address().port+'/health');console.log(await r.json());s.close();});\""
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "4.22.3",
+    "helmet": "8.1.0"
+  }
+}

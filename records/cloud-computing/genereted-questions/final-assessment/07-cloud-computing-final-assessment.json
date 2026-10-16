@@ -1,0 +1,36 @@
+{
+  "id": "cd1f5c89aef44e46b23c4f13e807c8e8",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Dentro de um arquivo YAML, para configurar a pipeline para que ela seja executada automáticamente com um commit na branch main. Qual o melhor código configura essa automação da pipeline?"
+  ],
+  "alternatives": [
+    {
+      "id": "9619c41b-0d64-4539-9e91-1737b45dd1e3",
+      "text": "```\ntrigger:\n    include:\n      - main\n```",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "1d37d4bb-89b0-440a-933e-dbe544e305c9",
+      "text": "```\ntrigger:\n    - main\n```",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "d31ec471-2ecf-49c4-bb98-06ec99a5af59",
+      "text": "```\ntrigger:\n  branches:\n    include:\n      - main\n```",
+      "feedback": "Correto!",
+      "correct": true
+    }
+  ]
+}

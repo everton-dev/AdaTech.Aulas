@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlobStorageFunctionApp", "BlobStorageFunctionApp\BlobStorageFunctionApp.csproj", "{1F578861-A66F-45BB-AF13-2A6D2340486E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F578861-A66F-45BB-AF13-2A6D2340486E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F578861-A66F-45BB-AF13-2A6D2340486E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F578861-A66F-45BB-AF13-2A6D2340486E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F578861-A66F-45BB-AF13-2A6D2340486E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D3093D75-B1B9-4855-A4BA-1688F00D5ED1}
+	EndGlobalSection
+EndGlobal

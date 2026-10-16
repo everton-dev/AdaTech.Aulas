@@ -1,0 +1,39 @@
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: api-pagamentos-policy
+spec:
+  images:
+    - glob: "ghcr.io/empresa/api-pagamentos**"
+  authorities:
+    # Assinatura keyless emitida pelo workflow release.yml do repositorio
+    - name: release-signature
+      keyless:
+        url: https://fulcio.sigstore.dev
+        identities:
+          - issuer: https://token.actions.githubusercontent.com
+            subjectRegExp: "^https://github.com/empresa/api-pagamentos/.*"
+      ctlog:
+        url: https://rekor.sigstore.dev
+      attestations:
+        - name: must-have-sbom
+          predicateType: https://cyclonedx.org/bom
+    # Provenance SLSA L3 e assinada pelo builder reutilizavel, nao pelo repo
+    - name: slsa-provenance
+      keyless:
+        url: https://fulcio.sigstore.dev
+        identities:
+          - issuer: https://token.actions.githubusercontent.com
+            subjectRegExp: "^https://github.com/slsa-framework/slsa-github-generator/.*"
+      ctlog:
+        url: https://rekor.sigstore.dev
+      attestations:
+        - name: must-have-provenance
+          predicateType: https://slsa.dev/provenance/v1
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: producao
+  labels:
+    policy.sigstore.dev/include: "true"

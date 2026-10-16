@@ -1,0 +1,6 @@
+{
+  "config": {
+    "User": "1001",
+    "Cmd": ["node", "server.js"]
+  }
+}

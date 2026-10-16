@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Wiki profissional de Everton José Benedicto, DevOps Engineer, Tech Lead e desenvolvedor .NET.">
+  <title>Everton José Benedicto | Wiki profissional</title>
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--cp-bg);
+      color: var(--cp-text);
+      font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+    }
+    a { color: var(--cp-link); }
+    a:hover { color: var(--cp-accent); }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--cp-border);
+      background: var(--cp-panel-strong);
+    }
+    .topbar-inner, .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .topbar-inner { display: flex; align-items: center; justify-content: space-between; min-height: 56px; gap: 16px; }
+    .brand { color: var(--cp-text); font-weight: 700; text-decoration: none; }
+    .topbar nav { display: flex; flex-wrap: wrap; gap: 16px; }
+    .topbar nav a { color: var(--cp-text-muted); font-size: 0.9rem; text-decoration: none; }
+    .topbar nav a:hover { color: var(--cp-accent); }
+    .page { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 32px; padding: 32px 0 64px; }
+    .sidebar { position: sticky; top: 88px; align-self: start; }
+    .profile {
+      overflow: hidden;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-surface);
+      box-shadow: 0 0 2px var(--cp-border), 0 1px 2px var(--cp-border);
+    }
+    .profile img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: center 44%; background: var(--cp-accent-soft); }
+    .profile-body { padding: 20px; }
+    .profile h1 { margin: 0; font-size: 1.55rem; line-height: 1.2; }
+    .role { margin: 8px 0 16px; color: var(--cp-accent); font-weight: 650; }
+    .contact-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; font-size: 0.9rem; overflow-wrap: anywhere; }
+    .toc { margin-top: 20px; padding: 16px 20px; border-left: 3px solid var(--cp-accent); background: var(--cp-surface-soft); }
+    .toc strong { display: block; margin-bottom: 8px; }
+    .toc a { display: block; padding: 3px 0; color: var(--cp-text-muted); text-decoration: none; }
+    main { min-width: 0; }
+    .intro { padding: 8px 0 24px; border-bottom: 1px solid var(--cp-border-strong); }
+    .eyebrow { margin: 0 0 8px; color: var(--cp-accent); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+    .intro h2 { margin: 0; font-size: clamp(2rem, 6vw, 4.5rem); line-height: 1.05; letter-spacing: 0; }
+    .lead { max-width: 760px; margin: 20px 0 0; color: var(--cp-text-muted); font-size: 1.08rem; }
+    section { padding: 32px 0; border-bottom: 1px solid var(--cp-border); scroll-margin-top: 72px; }
+    section h2 { margin: 0 0 20px; font-size: 1.6rem; }
+    .summary-grid, .skills-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .fact, .skill-group { padding: 16px; border: 1px solid var(--cp-border); border-radius: 0.625rem; background: var(--cp-surface); }
+    .fact strong, .skill-group h3 { display: block; margin: 0 0 4px; color: var(--cp-accent); font-size: 1rem; }
+    .fact span { color: var(--cp-text-muted); }
+    .timeline { display: grid; gap: 28px; }
+    .job { position: relative; padding-left: 24px; border-left: 2px solid var(--cp-border); }
+    .job::before { position: absolute; top: 7px; left: -7px; width: 12px; height: 12px; border-radius: 50%; background: var(--cp-accent); content: ""; }
+    .job-header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+    .job h3 { margin: 0; font-size: 1.15rem; }
+    .date { flex: 0 0 auto; color: var(--cp-text-muted); font-size: 0.9rem; font-weight: 600; }
+    .position { margin: 4px 0 10px; color: var(--cp-accent); font-weight: 650; }
+    .job p { margin: 8px 0; }
+    .job ul { margin: 8px 0; padding-left: 20px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .chips li { padding: 4px 10px; border: 1px solid var(--cp-border); border-radius: 0.625rem; background: var(--cp-surface-soft); font-size: 0.88rem; }
+    .certificate { display: flex; justify-content: space-between; gap: 20px; padding: 16px 0; border-top: 1px solid var(--cp-border); }
+    .certificate:first-of-type { border-top: 0; }
+    footer { padding-top: 24px; color: var(--cp-text-muted); font-size: 0.9rem; text-align: center; }
+    @media (max-width: 820px) {
+      .topbar nav { display: none; }
+      .page { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .profile { display: grid; grid-template-columns: minmax(160px, 34%) 1fr; }
+      .profile img { height: 100%; aspect-ratio: auto; }
+      .toc { display: none; }
+    }
+    @media (max-width: 560px) {
+      .page, .topbar-inner { width: min(100% - 24px, 1180px); }
+      .profile { display: block; }
+      .profile img { aspect-ratio: 16 / 8; }
+      .summary-grid, .skills-grid { grid-template-columns: 1fr; }
+      .job-header, .certificate { display: block; }
+      .date { display: block; margin-top: 4px; }
+    }
+    @media print {
+      .topbar, .toc { display: none; }
+      .page { display: block; width: 100%; padding: 0; }
+      .sidebar { position: static; }
+      .profile { display: grid; grid-template-columns: 180px 1fr; box-shadow: none; }
+      section, .job { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#inicio">Wiki profissional</a>
+      <nav aria-label="Navegação principal">
+        <a href="#resumo">Resumo</a>
+        <a href="#experiencia">Experiência</a>
+        <a href="#tecnologias">Tecnologias</a>
+        <a href="#formacao">Formação</a>
+        <a href="#certificacoes">Certificações</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page" id="inicio">
+    <aside class="sidebar" aria-label="Perfil de Everton José Benedicto">
+      <article class="profile">
+        <img src="images/foto-studio.jpeg" alt="Retrato profissional de Everton José Benedicto">
+        <div class="profile-body">
+          <h1>Everton José Benedicto</h1>
+          <p class="role">DevOps Engineer · .NET · Backend · Azure · Fullstack</p>
+          <ul class="contact-list">
+            <li>Ovar, Aveiro, Portugal</li>
+            <li><a href="mailto:analista.everton@gmail.com">analista.everton@gmail.com</a></li>
+            <li><a href="tel:+351926089159">+351 926 089 159</a></li>
+            <li><a href="https://www.linkedin.com/in/ejbenedicto/" target="_blank" rel="noreferrer">LinkedIn</a></li>
+          </ul>
+        </div>
+      </article>
+      <nav class="toc" aria-label="Índice do currículo">
+        <strong>Nesta página</strong>
+        <a href="#resumo">Resumo</a>
+        <a href="#experiencia">Experiência</a>
+        <a href="#tecnologias">Tecnologias</a>
+        <a href="#formacao">Formação e voluntariado</a>
+        <a href="#certificacoes">Certificações</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="intro">
+        <p class="eyebrow">Perfil profissional</p>
+        <h2>Arquitetura, código e cloud em produção.</h2>
+        <p class="lead">Desenvolvedor .NET desde 2010, Tech Lead, arquiteto de software, engenheiro DevOps e professor. Experiência na construção de aplicações, plataformas Azure, automação de infraestrutura e formação de equipes técnicas.</p>
+      </header>
+
+      <section id="resumo">
+        <h2>Resumo de qualificações</h2>
+        <div class="summary-grid">
+          <div class="fact"><strong>Desenvolvimento</strong><span>C#, .NET, ASP.NET Core, JavaScript, TypeScript e ecossistemas frontend.</span></div>
+          <div class="fact"><strong>Cloud &amp; DevOps</strong><span>Azure e Google Cloud, PaaS, IaaS, SaaS, CI/CD e infraestrutura como código.</span></div>
+          <div class="fact"><strong>Liderança técnica</strong><span>System Design, code review, workshops, gestão de entregas e mentoria.</span></div>
+          <div class="fact"><strong>Qualidade</strong><span>NUnit, xUnit, Moq, Selenium, Playwright, Postman, Bruno, SoapUI e JMeter.</span></div>
+          <div class="fact"><strong>Infraestrutura como código</strong><span>Bicep, Terraform, ARM Templates, Azure CLI e PowerShell.</span></div>
+          <div class="fact"><strong>Idiomas</strong><span>Português nativo, inglês B2, espanhol A1 e francês A1.</span></div>
+        </div>
+      </section>
+
+      <section id="experiencia">
+        <h2>Experiência profissional</h2>
+        <div class="timeline">
+          <article class="job">
+            <div class="job-header"><h3>ADA · São Paulo, Brasil</h3><span class="date">Set/2024 – atual</span></div>
+            <p class="position">Professor de Tecnologia da Informação</p>
+            <p>Formação de desenvolvedores e profissionais de dados, conectando conceitos técnicos às demandas reais da indústria.</p>
+            <ul>
+              <li>Módulos de Azure (AZ-900), SQL Server e Azure Data Factory.</li>
+              <li>System Design, .NET e Segurança da Informação.</li>
+              <li>Simulações de entrevistas, mentoria de carreira e feedback individual.</li>
+            </ul>
+          </article>
+          <article class="job">
+            <div class="job-header"><h3>Siemens · Porto, Portugal</h3><span class="date">Mai/2023 – atual</span></div>
+            <p class="position">DevOps Engineer · Tech Lead .NET</p>
+            <p>Criação e manutenção de soluções Azure com App Services, Function Apps, Storage Accounts, Logic Apps, AI Services, Automation Accounts, VNet e API Management.</p>
+            <ul>
+              <li>CI/CD em YAML, ARM Templates, Azure CLI e PowerShell Az Modules.</li>
+              <li>Organização de demonstrações, workshops e sessões de transferência de conhecimento.</li>
+              <li>Mentoria na Siemens Academy em APIs e Azure DevOps; consultoria em Playwright.</li>
+            </ul>
+          </article>
+          <article class="job">
+            <div class="job-header"><h3>IT Sector · Porto, Portugal</h3><span class="date">Ago/2022 – Mai/2023</span></div>
+            <p class="position">System Architect</p>
+            <p>Arquitetura e desenvolvimento para o Millennium BCP com .NET 6, C#, ASP.NET Core, APIs REST, Redis, Azure Cosmos DB, MongoDB, SQL Server e Azure DevOps. Participação nos projetos M2030, IziBizi e MSE.</p>
+            <p>Condução de Tech Talk sobre decisões, vantagens e limites da arquitetura de microsserviços.</p>
+          </article>
+          <article class="job">
+            <div class="job-header"><h3>Trend4IT · Porto, Portugal</h3><span class="date">Ago/2021 – Nov/2022</span></div>
+            <p class="position">Senior .NET Developer</p>
+            <p>Atuação no Millennium BCP em arquitetura e desenvolvimento backend com .NET 6, APIs REST, Redis, Azure Cosmos DB, MongoDB, SQL Server e pipelines Azure DevOps.</p>
+          </article>
+          <article class="job">
+            <div class="job-header"><h3>Globant · São Paulo, Brasil</h3><span class="date">Ago/2021 – Mar/2022</span></div>
+            <p class="position">Senior .NET Developer</p>
+            <p>Desenvolvimento backend em C# e .NET 6 para WellSky, com serviços REST, CI/CD no Google Cloud e Firebase. Atuação também em projetos AbbVie e programas internos de liderança.</p>
+          </article>
+          <article class="job">
+            <div class="job-header"><h3>Sompo Seguros · São Paulo, Brasil</h3><span class="date">Nov/2019 – Jul/2021</span></div>
+            <p class="position">Senior .NET Developer</p>
+            <p>Desenvolvimento e suporte do portal de cotação de seguros de frotas com C#, ASP.NET Core, SQL Server, MongoDB, DDD, microsserviços, CQRS e testes xUnit. Planejamento arquitetural e contato diário com o cliente.</p>
+          </article>
+          <article class="job">
+            <div class="job-header"><h3>Intervalor Arvato · São Paulo, Brasil</h3><span class="date">Out/2015 – Out/2019</span></div>
+            <p class="position">Senior .NET Developer</p>
+            <p>Modernização de aplicações VB6 para VB.NET e ASP.NET, automação de processos de call center em AngularJS e arquitetura de plataforma RPA para negociação multicanal.</p>
+          </article>
+          <article class="job">
+            <div class="job-header"><h3>Experiências anteriores</h3><span class="date">2006 – 2015</span></div>
+            <p class="position">Desenvolvimento .NET, BI e Administração de Dados</p>
+            <p>Capta Tecnologia, O2CI, BRQ IT Services, Microsffer Informática, Nextt Soluções em Informática e Anhebi Chevrolet. Projetos com C#, VB.NET, WPF, ASP.NET, WCF, SQL Server, Oracle, SharePoint, ETL e Business Intelligence.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="tecnologias">
+        <h2>Tecnologias</h2>
+        <div class="skills-grid">
+          <article class="skill-group"><h3>Backend</h3><ul class="chips"><li>C#</li><li>.NET</li><li>ASP.NET Core</li><li>Node.js</li><li>Express</li><li>GraphQL</li></ul></article>
+          <article class="skill-group"><h3>Cloud &amp; DevOps</h3><ul class="chips"><li>Azure</li><li>Google Cloud</li><li>Docker</li><li>Bicep</li><li>Terraform</li><li>PowerShell</li><li>CI/CD</li></ul></article>
+          <article class="skill-group"><h3>Dados</h3><ul class="chips"><li>SQL Server</li><li>MongoDB</li><li>Cosmos DB</li><li>Redis</li><li>Azure Data Factory</li></ul></article>
+          <article class="skill-group"><h3>Frontend &amp; testes</h3><ul class="chips"><li>Angular</li><li>React</li><li>Vue.js</li><li>TypeScript</li><li>Playwright</li><li>xUnit</li><li>Selenium</li></ul></article>
+        </div>
+      </section>
+
+      <section id="formacao">
+        <h2>Formação e voluntariado</h2>
+        <article class="job">
+          <div class="job-header"><h3>Faculdade Sumaré</h3><span class="date">Jan/2006 – Abr/2011</span></div>
+          <p class="position">Bacharelado em Sistemas de Informação</p>
+        </article>
+        <article class="job">
+          <div class="job-header"><h3>PAC · Projeto Amigo das Crianças</h3><span class="date">Jul/2021 – Ago/2021</span></div>
+          <p class="position">Professor de Linguagem de Programação</p>
+          <p>Ensino de programação e preparação de jovens para ingressar no mercado de tecnologia.</p>
+        </article>
+      </section>
+
+      <section id="certificacoes">
+        <h2>Certificações</h2>
+        <div class="certificate"><div><strong>Microsoft Certified: Azure Fundamentals</strong><br><a href="https://www.credly.com/badges/15e1c522-41ac-4c0f-b4f3-ee57e8c419d5/linked_in_profile" target="_blank" rel="noreferrer">Ver credencial</a></div><span class="date">Dez/2022</span></div>
+        <div class="certificate"><div><strong>PSM I · Professional Scrum Master</strong><br><a href="https://www.scrum.org/user/26066" target="_blank" rel="noreferrer">Ver credencial</a></div><span class="date">Jul/2021</span></div>
+      </section>
+
+      <footer>Currículo apresentado em formato de wiki profissional.</footer>
+    </main>
+  </div>
+</body>
+</html>

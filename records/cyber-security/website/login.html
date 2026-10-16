@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Desk</title>
+    <!-- Importando o CSS do Materialize -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        .header-logo {
+            height: 50px;
+            margin: 10px 0;
+        }
+        .login-container {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-wrapper blue darken-4">
+                <a href="#" class="brand-logo center">
+                    <img src="images/help-desk.png" alt="Logo da Empresa" class="header-logo">
+                </a>
+            </div>
+        </nav>
+    </header>
+    <div class="container login-container">
+        <div class="row">
+            <div class="col s12 m6 offset-m3">
+                <h3 class="center-align">Login</h3>
+                <div class="card">
+                    <div class="card-content">
+                        <form id="login-form">
+                            <div class="input-field">
+                                <input id="email" type="email" class="validate">
+                                <label for="email">E-mail</label>
+                            </div>
+                            <div class="input-field">
+                                <input id="password" type="password" class="validate">
+                                <label for="password">Senha</label>
+                            </div>
+                            <div class="center-align">
+                                <button class="btn waves-effect waves-light" type="submit">Login</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-action center-align">
+                        <a href="login-forgot.html">Esqueci minha senha</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Importando o JavaScript do Materialize -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            window.location.href = 'campaign.html';
+        });
+    </script>
+</body>
+</html>

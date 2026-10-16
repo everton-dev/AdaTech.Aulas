@@ -1,0 +1,32 @@
+{
+  "id": "dc110c5839ee47afb35d99b8b0e9323c",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O **Terraform** é uma ferramenta de código aberto IaC (Infrastructure-as-Code) para configurar e implantar infraestrutura em nuvem.",
+    "",
+    "Essa afirmação é verdadeira ou falsa?"
+  ],
+  "alternatives": [
+    {
+      "id": "1f0bdcc3-0adb-4959-9c17-f8b607d8f4bb",
+      "text": "Verdadeiro",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "7bd3945f-6aaa-4a9f-96f6-64d333eea82a",
+      "text": "Falsa",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

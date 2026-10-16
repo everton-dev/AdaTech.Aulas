@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 360" role="img" aria-labelledby="title desc">
+  <title id="title">Produtos organizados</title>
+  <desc id="desc">Caixas de produtos sobre uma prateleira de estoque.</desc>
+  <rect width="520" height="360" rx="32" fill="#f5f5f5"/>
+  <g fill="none" stroke="#b11f4b" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M55 292h410M82 292v30m356-30v30"/>
+    <path d="m96 115 75-34 75 34-75 36Z"/>
+    <path d="M96 115v107l75 38 75-38V115m-75 36v109"/>
+    <path d="m274 151 63-28 82 38-67 31Z"/>
+    <path d="M274 151v83l78 39 67-33v-79m-67 31v81"/>
+    <path d="M135 187h31m147 10h31"/>
+  </g>
+</svg>

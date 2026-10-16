@@ -1,0 +1,36 @@
+{
+  "id": "db3ada85f0924875babad0862a56e513",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O que melhor define IaC (infraestrutura como código)?"
+  ],
+  "alternatives": [
+    {
+      "id": "5bd9b24c-09de-4b11-aebd-93f848e41df9",
+      "text": "A infraestrutura como código (IaC) usa a metodologia de DevOps e o controle de versão com um modelo descritivo para definir e implantar a segurança no Azure.",
+      "feedback": "Errado!",
+      "correct": false
+    },
+    {
+      "id": "1347c074-0190-41df-9527-bd947daf4041",
+      "text": "A infraestrutura como código (IaC) usa a metodologia de DevOps e o controle de versão com um modelo descritivo para definir e implantar a infraestrutura, como redes, máquinas virtuais, balanceadores de carga e topologias de conexão.",
+      "feedback": "Correto!",
+      "correct": true
+    },
+    {
+      "id": "f08e049e-a70e-467f-b2ff-812764a7c839",
+      "text": "A infraestrutura como código (IaC) usa a metodologia de DevOps e o controle de versão para criação de pipelines.",
+      "feedback": "Errado!",
+      "correct": false
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "9b93a6f21d0c42a7960e55bb306cb27d",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "O que são máquinas virtuais do Azure?"
+  ],
+  "alternatives": [
+    {
+      "id": "3c38f442-aa5e-42c9-9780-da4d69d13d64",
+      "text": "São servidores disponibilizados pela Azure em que todas as empresa podem acessar elas com autenticação SSH.",
+      "feedback": "Os servidores do Azure não podem ser acessados diretamente por autenticação SSH.",
+      "correct": false
+    },
+    {
+      "id": "77e2e687-ead6-4b72-a080-e2b926f53e5f",
+      "text": "As máquinas virtuais do Azure são um dos vários tipos de recursos de computação sob demanda escalonáveis oferecidos pelo Azure.",
+      "feedback": "**Correto!**\nNormalmente, você escolhe uma máquina virtual quando precisa de mais controle sobre o ambiente de computação do que as outras opções oferecem",
+      "correct": true
+    },
+    {
+      "id": "e938a25f-4194-4b7b-8d2a-febac6033eb5",
+      "text": "As máquinas virtuais do Azure são provisionadas automáticamente para todos os recrusos do Azure e conseguimos acessar essas máquinas virtuais com autenticação SSH.",
+      "feedback": "Não são geradas provisionadas automáticamente para todos os recrusos do Azure máquinas virtuais as quais podemos acessá-las.",
+      "correct": false
+    }
+  ]
+}

@@ -1,0 +1,306 @@
+name: APIs CI/CD Pipeline
+
+# Repository prerequisites:
+# 1. Add DOCKERHUB_USERNAME and DOCKERHUB_TOKEN as GitHub Actions secrets.
+# 2. Create the uat, production-approval, and production GitHub Environments.
+# 3. Add required reviewers to production-approval to make the gate pause the workflow.
+# 4. Place this file at .github/workflows/publicar-containers.yml to run it on GitHub.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "aula-04/api-messages/**"
+      - "aula-04/api-payments/**"
+      - "aula-05/publicar-containers.yml"
+      - ".github/workflows/publicar-containers.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "aula-04/api-messages/**"
+      - "aula-04/api-payments/**"
+  workflow_dispatch:
+
+# Prevent two deployments from changing the same environment at the same time.
+concurrency:
+  group: api-deployment-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  # CI - Build each API image once and store it for the next jobs.
+  build:
+    name: CI | Build ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: api-messages
+            context: aula-04/api-messages
+          - image: api-payments
+            context: aula-04/api-payments
+
+    steps:
+      # Download the repository so Docker can access each build context.
+      - name: Check out source code
+        uses: actions/checkout@v4
+
+      # Build a local image identified by the immutable commit SHA.
+      - name: Build Docker image
+        run: docker build --tag local/${{ matrix.image }}:${IMAGE_TAG} ${{ matrix.context }}
+
+      # Export the image so later jobs use the exact artifact that was built here.
+      - name: Export Docker image
+        run: docker save local/${{ matrix.image }}:${IMAGE_TAG} --output ${{ matrix.image }}.tar
+
+      # Keep the image artifact only long enough to complete this pipeline.
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-${{ matrix.image }}
+          path: ${{ matrix.image }}.tar
+          retention-days: 1
+
+  # CI - Run the project's test command and smoke-test the built containers.
+  test:
+    name: CI | Test ${{ matrix.image }}
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: api-messages
+            context: aula-04/api-messages
+            port: 3000
+            smoke_command: curl --fail --silent http://localhost:3000/day
+          - image: api-payments
+            context: aula-04/api-payments
+            port: 4000
+            smoke_command: curl --fail --silent --request POST http://localhost:4000/pix/10
+
+    steps:
+      # Download the source to run the tests declared by each Node.js project.
+      - name: Check out source code
+        uses: actions/checkout@v4
+
+      # Use the same major Node.js version declared in the Dockerfiles.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # Execute unit tests before the image can be published.
+      - name: Run unit tests
+        working-directory: ${{ matrix.context }}
+        run: npm test
+
+      # Retrieve the immutable image produced by the build job.
+      - name: Download image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: image-${{ matrix.image }}
+
+      # Import the image into the current runner's local Docker daemon.
+      - name: Load Docker image
+        run: docker load --input ${{ matrix.image }}.tar
+
+      # Start the API and remove it automatically when this job finishes.
+      - name: Start API container
+        run: |
+          docker run --detach \
+            --name ${{ matrix.image }} \
+            --publish ${{ matrix.port }}:${{ matrix.port }} \
+            local/${{ matrix.image }}:${IMAGE_TAG}
+
+      # Retry briefly while the Node.js process starts, then verify its real endpoint.
+      - name: Run container smoke test
+        run: ${{ matrix.smoke_command }} --retry 5 --retry-connrefused --retry-delay 2
+
+  # CI - Publish only tested images from the main branch to Docker Hub.
+  publish:
+    name: CI | Publish ${{ matrix.image }}
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [api-messages, api-payments]
+
+    steps:
+      # Retrieve the same image artifact that passed the test job.
+      - name: Download image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: image-${{ matrix.image }}
+
+      # Import the tested image without rebuilding it.
+      - name: Load Docker image
+        run: docker load --input ${{ matrix.image }}.tar
+
+      # Authenticate with credentials stored as GitHub Actions secrets.
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Publish an immutable SHA tag and the moving latest tag.
+      - name: Push image to Docker Hub
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          docker tag local/${{ matrix.image }}:${IMAGE_TAG} ${DOCKERHUB_USERNAME}/${{ matrix.image }}:${IMAGE_TAG}
+          docker tag local/${{ matrix.image }}:${IMAGE_TAG} ${DOCKERHUB_USERNAME}/${{ matrix.image }}:latest
+          docker push ${DOCKERHUB_USERNAME}/${{ matrix.image }}:${IMAGE_TAG}
+          docker push ${DOCKERHUB_USERNAME}/${{ matrix.image }}:latest
+
+  # CD - Simulate UAT by deploying the published images to isolated runner containers.
+  deploy-uat:
+    name: CD | Deploy ${{ matrix.image }} to UAT
+    needs: publish
+    runs-on: ubuntu-latest
+    environment: uat
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: api-messages
+            port: 3000
+            smoke_command: curl --fail --silent http://localhost:3000/day
+          - image: api-payments
+            port: 4000
+            smoke_command: curl --fail --silent --request POST http://localhost:4000/pix/10
+
+    steps:
+      # Authenticate so the example also works with private Docker Hub repositories.
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Represent a UAT deployment by running the published immutable image.
+      - name: Deploy API to simulated UAT
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          docker run --detach \
+            --name uat-${{ matrix.image }} \
+            --publish ${{ matrix.port }}:${{ matrix.port }} \
+            ${DOCKERHUB_USERNAME}/${{ matrix.image }}:${IMAGE_TAG}
+
+      # Validate UAT before allowing the pipeline to request production approval.
+      - name: Run UAT acceptance test
+        run: ${{ matrix.smoke_command }} --retry 5 --retry-connrefused --retry-delay 2
+
+  # CD - This job pauses when the production-approval environment has required reviewers.
+  approval-gate:
+    name: CD | Production approval gate
+    needs: deploy-uat
+    runs-on: ubuntu-latest
+    environment: production-approval
+
+    steps:
+      # Record that an authorized reviewer approved the release in GitHub Environments.
+      - name: Confirm production approval
+        run: echo "Production deployment approved for commit ${IMAGE_TAG}."
+
+  # CD - Deploy both approved API images to the simulated production stage.
+  deploy-production:
+    name: CD | Deploy ${{ matrix.image }} to Production
+    needs: approval-gate
+    runs-on: ubuntu-latest
+    environment: production
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: api-messages
+            port: 3000
+            smoke_command: curl --fail --silent http://localhost:3000/day
+          - image: api-payments
+            port: 4000
+            smoke_command: curl --fail --silent --request POST http://localhost:4000/pix/10
+
+    steps:
+      # Authenticate before pulling the release candidate from Docker Hub.
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Simulate deploying the approved immutable image to production.
+      - name: Deploy API to simulated production
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          docker run --detach \
+            --name production-${{ matrix.image }} \
+            --publish ${{ matrix.port }}:${{ matrix.port }} \
+            ${DOCKERHUB_USERNAME}/${{ matrix.image }}:${IMAGE_TAG}
+
+      # Confirm that the new production container answers before monitoring begins.
+      - name: Verify production deployment
+        run: ${{ matrix.smoke_command }} --retry 5 --retry-connrefused --retry-delay 2
+
+  # CD - Evaluate a simple availability metric and decide to roll out or roll back.
+  rollout-or-rollback:
+    name: CD | Metrics, Rollout or Rollback
+    needs: deploy-production
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      # Authenticate before recreating the simulated production release for observation.
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Start both APIs to represent the version currently receiving production traffic.
+      - name: Start production release for monitoring
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          docker run --detach --name metrics-messages --publish 3000:3000 ${DOCKERHUB_USERNAME}/api-messages:${IMAGE_TAG}
+          docker run --detach --name metrics-payments --publish 4000:4000 ${DOCKERHUB_USERNAME}/api-payments:${IMAGE_TAG}
+
+      # Simulate an availability metric from 20 requests and require at least 95% success.
+      - name: Evaluate release metrics
+        id: metrics
+        shell: bash
+        run: |
+          successful_requests=0
+          total_requests=20
+
+          for attempt in {1..10}; do
+            curl --fail --silent http://localhost:3000/day > /dev/null && successful_requests=$((successful_requests + 1)) || true
+            curl --fail --silent --request POST http://localhost:4000/pix/10 > /dev/null && successful_requests=$((successful_requests + 1)) || true
+          done
+
+          success_rate=$((successful_requests * 100 / total_requests))
+          echo "success_rate=${success_rate}" >> "${GITHUB_OUTPUT}"
+          echo "Observed availability: ${success_rate}%"
+
+      # Complete the rollout when the release meets the service-level threshold.
+      - name: Complete rollout
+        if: steps.metrics.outputs.success_rate >= 95
+        run: echo "Rollout completed because availability is at least 95%."
+
+      # Simulate rollback to the previous tag and fail the workflow when metrics degrade.
+      - name: Roll back release
+        if: steps.metrics.outputs.success_rate < 95
+        run: |
+          echo "Metrics are below the 95% threshold. Rolling back to the previous stable image."
+          echo "A real deployment would now restore the tag stored as PREVIOUS_STABLE_TAG."
+          exit 1

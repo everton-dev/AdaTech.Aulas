@@ -1,0 +1,93 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccountName": {
+            "type": "string"
+        },
+        "functionAppName": {
+            "type": "string"
+        },
+        "functionsVersion": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "skuStorage": {
+            "type": "string"
+        },
+        "sqlServerName": {
+            "type": "string"
+        },
+        "sqlServerDatabaseName": {
+            "type": "string"
+        },
+        "sqlServerDatabaseUser": {
+            "type": "string"
+        },
+        "sqlServerDatabasePassword": {
+            "type": "securestring"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-04-01",
+            "location": "[parameters('location')]",
+            "name": "[parameters('storageAccountName')]",
+            "sku": {
+                "name": "[parameters('skuStorage')]"
+            },
+            "kind": "StorageV2",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2021-02-01",
+            "location": "[parameters('location')]",
+            "name": "[parameters('functionAppName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            ],
+            "properties": {
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-04-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "[parameters('functionsVersion')]"
+                        },
+                        {
+                            "name": "WEBSITE_RUN_FROM_PACKAGE",
+                            "value": "1"
+                        },
+                        {
+                            "name": "SQL_SERVER_NAME",
+                            "value": "[parameters('sqlServerName')]"
+                        },
+                        {
+                            "name": "SQL_DATABASE_NAME",
+                            "value": "[parameters('sqlServerDatabaseName')]"
+                        },
+                        {
+                            "name": "SQL_DATABASE_USER",
+                            "value": "[parameters('sqlServerDatabaseUser')]"
+                        },
+                        {
+                            "name": "SQL_DATABASE_PASSWORD",
+                            "value": "[parameters('sqlServerDatabasePassword')]"
+                        }
+                    ]
+                }
+            },
+            "kind": "functionapp",
+            "tags": {
+                "Tag": "AdaTech-Everton"
+            }
+        }
+    ]
+}

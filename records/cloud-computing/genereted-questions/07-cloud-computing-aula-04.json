@@ -1,0 +1,36 @@
+{
+  "id": "9c1f3662c40c4efaaea1d2ced3e7073a",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Para executar os comandos CLI do Azure em sua máquina local o que precisa ser feito?"
+  ],
+  "alternatives": [
+    {
+      "id": "7403d2fe-9bb0-48d3-8e02-99dadc489a6f",
+      "text": "Instalar o Visual Studio",
+      "feedback": "Errado!\nO Visual Studio é uma IDE mais abrangente para desenvolvedores .NET e C++ no Windows.",
+      "correct": false
+    },
+    {
+      "id": "2ebc9309-8378-4338-9ab8-e0ff0365b91e",
+      "text": "Instalar o Azure CLI",
+      "feedback": "Correto!\nPara executar comandos CLI do Azure de sua máquina local você precisa primeiramente instalar o Azure CLI",
+      "correct": true
+    },
+    {
+      "id": "9a5c44de-c58f-49f8-b340-f00bf4ada5eb",
+      "text": "Nada! O CLI do Azure já vem instalado nos sistemas operacionais.",
+      "feedback": "Errado!\nO Azure CLI precisa ser instalado seja qual for o sistema operacional.",
+      "correct": false
+    }
+  ]
+}

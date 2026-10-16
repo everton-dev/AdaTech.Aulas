@@ -1,0 +1,22 @@
+{
+  "buildDefinition": {
+    "buildType": "https://lab.example/manual@v1",
+    "externalParameters": {
+      "source": {
+        "uri": "git+https://github.com/empresa/banner",
+        "digest": {"gitCommit": "abc1234567890abc1234567890abc1234567890a"}
+      }
+    },
+    "resolvedDependencies": [
+      {"uri": "pkg:docker/alpine@3.20", "digest": {"sha256": "ver-digest-real-no-lab"}}
+    ]
+  },
+  "runDetails": {
+    "builder": {"id": "https://lab.example/builder"},
+    "metadata": {
+      "invocationId": "lab-001",
+      "startedOn": "2026-10-30T10:00:00Z",
+      "finishedOn": "2026-10-30T10:01:00Z"
+    }
+  }
+}

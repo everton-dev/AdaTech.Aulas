@@ -1,0 +1,158 @@
+{
+    "id": "c73d2994-3c42-4a77-a30c-247fb0004259",
+    "name": "Everton José Benedicto",
+    "email": "everton.devbr@ada.com.br",
+    "type": "PREMIUM",
+    "contacts": [
+        {
+            "id": "26ac1593-6dcb-4238-9674-8ff9ebc67bc2",
+            "countryCode": "+351",
+            "number": "975348932",
+            "type": "MOBILE",
+            "preferred": true
+        }
+    ],
+    "address": {
+        "id": "a30c6d43-cf73-4468-9dc6-25e946fdb328",
+        "street": "Rua Antonio de Sousa e Silva",
+        "number": "123",
+        "complement": "Habitação 4",
+        "postalCode": "4200-156",
+        "city": "Porto",
+        "country": "Portugal"
+    },
+    "orders": [
+        {
+            "id": "e55267c2-a05c-4b6e-bb90-400f215de185",
+            "createdAt": "2020-01-01T00:00:00Z",
+            "updatedAt": "2020-01-01T00:00:00Z",
+            "status": "DELIVERED",
+            "items": [
+                {
+                    "id": "123e4567-e89b-12d3-a456-426614174004",
+                    "name": "Nintendo Switch",
+                    "quantity": 1,
+                    "price": 499.00
+                },
+                {
+                    "id": "123e4567-e89b-12d3-a456-426614174005",
+                    "name": "Geek T-Shirt",
+                    "quantity": 2,
+                    "price": 50.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b15",
+                    "name": "Joystick Nintendo Switch",
+                    "quantity": 2,
+                    "price": 89.99
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b16",
+                    "name": "Super Mario Odyssey - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b17",
+                    "name": "The Legend of Zelda: Breath of the Wild - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b18",
+                    "name": "Splatoon 2 - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b19",
+                    "name": "Mario Kart 8 Deluxe - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b20",
+                    "name": "Mario Wonder - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b21",
+                    "name": "Super Mario Maker 2 - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b22",
+                    "name": "Luigi's Mansion 3 - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b23",
+                    "name": "The Legend of Zelda: Link's Awakening - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b24",
+                    "name": "Pokémon Sword - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                },
+                {
+                    "id": "e8693ae0-e2fd-4b52-8f6e-ef4321064b25",
+                    "name": "Pokémon Shield - Game Nintendo Switch",
+                    "quantity": 1,
+                    "price": 49.00
+                }
+            ]
+        },
+        {
+            "id": "a45dc448-d267-4939-9a08-09aa04f0fbd2",
+            "createdAt": "2020-01-01T00:00:00Z",
+            "updatedAt": "2020-01-01T00:00:00Z",
+            "status": "ON_GOING",
+            "items": [
+                {
+                    "id": "d9837426-beed-4d12-b2dd-45d72f1622bd",
+                    "name": "TV Samsung 50'' 4K",
+                    "quantity": 1,
+                    "price": 449.99
+                },
+                {
+                    "id": "d9837426-beed-4d12-b2dd-45d72f1622be",
+                    "name": "Soundbar Samsung",
+                    "quantity": 1,
+                    "price": 199.99
+                },
+                {
+                    "id": "d9837426-beed-4d12-b2dd-45d72f1622bf",
+                    "name": "Smartphone Samsung Galaxy S10",
+                    "quantity": 1,
+                    "price": 799.99
+                },
+                {
+                    "id": "d9837426-beed-4d12-b2dd-45d72f1622c0",
+                    "name": "Smartwatch Samsung Galaxy Watch",
+                    "quantity": 1,
+                    "price": 299.99
+                },
+                {
+                    "id": "d9837426-beed-4d12-b2dd-45d72f1622c1",
+                    "name": "Notebook Samsung Odyssey",
+                    "quantity": 1,
+                    "price": 1499.99
+                },
+                {
+                    "id": "d9837426-beed-4d12-b2dd-45d72f1622c2",
+                    "name": "Tablet Samsung Galaxy Tab",
+                    "quantity": 1,
+                    "price": 299.99
+                }
+            ]
+        }
+    ],
+    "createdAt": "2020-01-01T00:00:00Z",
+    "updatedAt": "2020-01-01T00:00:00Z"
+}

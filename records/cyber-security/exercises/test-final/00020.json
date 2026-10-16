@@ -1,0 +1,42 @@
+{
+  "id": "483aa7c19da44afdbc3d917b0e55dd5e",
+  "type": "MULT",
+  "language": "",
+  "level": "Medium",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "Qual das seguintes situações **NÃO** é um exemplo de aplicação da Inteligência Artificial?"
+  ],
+  "alternatives": [
+    {
+      "id": "153969ec-b294-4b47-b30e-6b733aa51d3f",
+      "text": "Um carro autônomo que dirige sozinho pelas ruas.",
+      "feedback": "Incorreto. Carros autônomos utilizam IA para perceber o ambiente, tomar decisões e controlar o veículo.",
+      "correct": false
+    },
+    {
+      "id": "7aa6df65-3719-4e53-8c8b-5cd67479941e",
+      "text": "Um software que traduz textos de um idioma para outro.",
+      "feedback": "Incorreto. Tradutores automáticos utilizam IA para analisar e compreender a estrutura e o significado de diferentes idiomas.",
+      "correct": false
+    },
+    {
+      "id": "ea6f6f29-c91c-4db3-908f-2ed6e8ac874c",
+      "text": "Um médico que utiliza seu conhecimento e experiência para diagnosticar uma doença.",
+      "feedback": "Correto. O diagnóstico médico tradicional é baseado no conhecimento e experiência do profissional, não envolvendo o uso de IA.",
+      "correct": true
+    },
+    {
+      "id": "52673762-4a50-40d9-96e6-32fcbd547ead",
+      "text": "Um assistente virtual que responde a perguntas e executa tarefas por voz.",
+      "feedback": "Incorreto. Assistentes virtuais utilizam IA para entender a linguagem natural, responder perguntas e realizar tarefas solicitadas pelo usuário.",
+      "correct": false
+    }
+  ]
+}

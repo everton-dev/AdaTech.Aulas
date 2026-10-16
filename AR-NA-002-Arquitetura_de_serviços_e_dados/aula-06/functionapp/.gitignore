@@ -1,0 +1,14 @@
+## Build output
+bin/
+obj/
+
+## Azure Functions local artifacts
+local.settings.json
+.azurefunctions/
+azure-functions-core-tools/
+
+## User-specific files
+*.user
+*.suo
+.vs/
+.idea/

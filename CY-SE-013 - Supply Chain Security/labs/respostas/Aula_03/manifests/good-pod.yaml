@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-pod
+spec:
+  containers:
+    - name: web
+      # nginx-unprivileged escuta na 8080 e roda como UID 101 sem precisar de root
+      image: nginxinc/nginx-unprivileged:1.27
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101

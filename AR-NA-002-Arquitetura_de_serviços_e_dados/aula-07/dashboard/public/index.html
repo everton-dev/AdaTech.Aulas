@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Geek Store | Inteligência de Vendas</title>
+    <script>
+      (() => {
+        const param = new URLSearchParams(window.location.search).get("scoutTheme");
+        const theme =
+          param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --cp-bg: #edf8f3;
+        --cp-bg-elevated: #e2f5ed;
+        --cp-surface: #ffffff;
+        --cp-surface-soft: #d8f0e5;
+        --cp-border: #bcded1;
+        --cp-border-strong: #79b9a7;
+        --cp-text: #19202b;
+        --cp-text-muted: #52606c;
+        --cp-text-soft: #6c7a82;
+        --cp-accent: #1d9f4c;
+        --cp-accent-hover: #147d3b;
+        --cp-accent-soft: rgba(29, 159, 76, 0.14);
+        --cp-accent-fg: #ffffff;
+        --cp-success: #25bd58;
+        --cp-danger: #dc2626;
+        --cp-warning: #38a99d;
+        --cp-link: #2f7bb5;
+        --cp-shadow: 0 18px 48px rgba(25, 32, 43, 0.12);
+        --cp-overlay: rgba(255, 255, 255, 0.8);
+        --cp-panel: rgba(255, 255, 255, 0.86);
+        --cp-panel-strong: rgba(255, 255, 255, 0.96);
+        --cp-sheen: rgba(255, 255, 255, 0.55);
+        --cp-highlight: rgba(29, 159, 76, 0.12);
+      }
+      html[data-theme="dark"] {
+        color-scheme: dark;
+        --cp-bg: #10141a;
+        --cp-bg-elevated: #171d26;
+        --cp-surface: #1b222d;
+        --cp-surface-soft: #263340;
+        --cp-border: #344756;
+        --cp-border-strong: #587682;
+        --cp-text: #f2fbf6;
+        --cp-text-muted: #b9ccc3;
+        --cp-text-soft: #8fa89d;
+        --cp-accent: #4bea4d;
+        --cp-accent-hover: #72f36d;
+        --cp-accent-soft: rgba(75, 234, 77, 0.16);
+        --cp-accent-fg: #10141a;
+        --cp-success: #62d97a;
+        --cp-danger: #f87171;
+        --cp-warning: #55c2b6;
+        --cp-link: #4b91ca;
+        --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+        --cp-overlay: rgba(16, 15, 22, 0.88);
+        --cp-panel: rgba(27, 34, 45, 0.84);
+        --cp-panel-strong: rgba(27, 34, 45, 0.98);
+        --cp-sheen: rgba(255, 255, 255, 0.04);
+        --cp-highlight: rgba(75, 234, 77, 0.16);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-width: 320px;
+        background-color: var(--cp-bg);
+        background-image: linear-gradient(var(--cp-bg), var(--cp-bg-elevated)), linear-gradient(var(--cp-border) 1px, transparent 1px), linear-gradient(90deg, var(--cp-border) 1px, transparent 1px);
+        background-size: 100% 100%, 28px 28px, 28px 28px;
+        color: var(--cp-text);
+        font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+      button { font: inherit; }
+      .shell { width: min(1440px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 48px; }
+      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--cp-border); }
+      .brand { display: flex; align-items: center; gap: 14px; }
+      .brand-mark { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--cp-accent); border-radius: 6px; background: var(--cp-accent); color: var(--cp-accent-fg); box-shadow: 4px 4px 0 var(--cp-text); }
+      .brand h1 { margin: 0; font-size: 20px; font-weight: 800; line-height: 1.1; letter-spacing: 0; }
+      .brand p, .updated { margin: 4px 0 0; color: var(--cp-text-muted); font-size: 13px; }
+      .top-actions { display: flex; align-items: center; gap: 12px; }
+      .status { display: flex; align-items: center; gap: 8px; color: var(--cp-text-muted); font-size: 13px; white-space: nowrap; }
+      .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--cp-success); box-shadow: 0 0 0 3px var(--cp-accent-soft); }
+      .icon-button { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--cp-border); border-radius: 6px; color: var(--cp-text); background: var(--cp-surface); cursor: pointer; transition: border-color 160ms ease, background 160ms ease, color 160ms ease; }
+      .icon-button:hover { border-color: var(--cp-accent); background: var(--cp-accent); color: var(--cp-accent-fg); }
+      .hero { position: relative; display: flex; justify-content: space-between; gap: 24px; overflow: hidden; padding: 32px; border: 1px solid var(--cp-text); border-left: 5px solid var(--cp-accent); border-radius: 8px; background: var(--cp-text); box-shadow: var(--cp-shadow); color: var(--cp-bg-elevated); }
+      .report-watermark { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+      .hero > .report-watermark { position: absolute; z-index: 0; }
+      .report-watermark img { position: absolute; display: block; }
+      .watermark-logo { right: 180px; bottom: -25px; width: 230px; filter: invert(1); opacity: 0.1; }
+      .watermark-swirl { right: -72px; bottom: -112px; width: 340px; opacity: 0.3; }
+      .hero > * { position: relative; z-index: 1; }
+      .eyebrow { margin: 0 0 8px; color: var(--cp-accent); font-family: Consolas, "Courier New", Courier, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0; text-transform: uppercase; }
+      .hero h2 { max-width: 660px; margin: 0; font-size: clamp(26px, 4vw, 42px); font-weight: 800; line-height: 1.05; letter-spacing: 0; }
+      .hero-copy { max-width: 500px; margin: 14px 0 0; color: var(--cp-bg-elevated); line-height: 1.55; }
+      .hero-stat { min-width: 190px; padding-left: 24px; border-left: 1px solid var(--cp-accent); }
+      .hero-stat strong { display: block; color: var(--cp-accent); font-size: 34px; letter-spacing: 0; }
+      .hero-stat span { color: var(--cp-bg-elevated); font-size: 13px; }
+      html[data-theme="dark"] .hero { border-color: var(--cp-border-strong); background: var(--cp-bg-elevated); color: var(--cp-text); }
+      html[data-theme="dark"] .hero-copy,
+      html[data-theme="dark"] .hero-stat span { color: var(--cp-text-muted); }
+      .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 20px 0; }
+      .kpi { min-height: 150px; padding: 20px; border: 1px solid var(--cp-border); border-top: 3px solid var(--cp-accent); border-radius: 8px; background: var(--cp-surface); box-shadow: var(--cp-shadow); }
+      .kpi-head { display: flex; justify-content: space-between; align-items: center; color: var(--cp-text-muted); font-size: 13px; }
+      .kpi-icon { color: var(--cp-accent); }
+      .kpi strong { display: block; margin-top: 22px; color: var(--cp-text); font-size: 28px; font-weight: 800; letter-spacing: 0; }
+      .kpi span { display: block; margin-top: 8px; color: var(--cp-text-soft); font-size: 12px; }
+      .report-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(320px, 1fr); gap: 16px; }
+      .panel { min-width: 0; padding: 22px; border: 1px solid var(--cp-border); border-radius: 8px; background: var(--cp-surface); box-shadow: var(--cp-shadow); }
+      .panel-wide { grid-column: 1 / -1; }
+      .panel-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+      .panel-title h3 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: 0; }
+      .panel-title p { margin: 5px 0 0; color: var(--cp-text-muted); font-size: 13px; }
+      .chart-wrap { position: relative; min-height: 290px; }
+      .bar-list { display: grid; gap: 16px; }
+      .bar-row { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(85px, auto); gap: 10px 14px; align-items: center; }
+      .bar-label { overflow: hidden; color: var(--cp-text); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+      .bar-value { color: var(--cp-text-muted); font-family: Consolas, "Courier New", Courier, monospace; font-size: 12px; text-align: right; }
+      .bar-track { grid-column: 1 / -1; height: 7px; overflow: hidden; border-radius: 999px; background: var(--cp-surface-soft); }
+      .bar-fill { height: 100%; border-radius: inherit; background: var(--cp-accent); }
+      table { width: 100%; border-collapse: collapse; }
+      th { padding: 0 0 10px; border-bottom: 1px solid var(--cp-border); color: var(--cp-text-soft); font-family: Consolas, "Courier New", Courier, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0; text-align: left; text-transform: uppercase; }
+      td { padding: 13px 0; border-bottom: 1px solid var(--cp-border); font-size: 13px; }
+      td:last-child, th:last-child { text-align: right; }
+      tr:last-child td { border-bottom: 0; }
+      .type-tag { display: inline-block; padding: 4px 8px; border: 1px solid var(--cp-accent); border-radius: 4px; background: var(--cp-accent-soft); color: var(--cp-accent); font-size: 11px; font-weight: 700; }
+      .loading { display: grid; min-height: 320px; place-items: center; color: var(--cp-text-muted); }
+      .loading[hidden] { display: none; }
+      .error { display: none; margin-top: 20px; padding: 16px; border: 1px solid var(--cp-danger); border-radius: 10px; background: var(--cp-surface); color: var(--cp-danger); }
+      .error.visible { display: block; }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+      @media (max-width: 940px) { .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .report-grid { grid-template-columns: 1fr; } }
+      @media (max-width: 640px) { .shell { width: min(100% - 24px, 1440px); padding-top: 16px; } .topbar, .hero { align-items: flex-start; flex-direction: column; } .top-actions { width: 100%; justify-content: space-between; } .hero { padding: 26px; } .watermark-logo { right: 118px; width: 180px; } .watermark-swirl { right: -90px; width: 290px; } .hero-stat { width: 100%; padding: 18px 0 0; border-top: 1px solid var(--cp-accent); border-left: 0; } .kpi-grid { grid-template-columns: 1fr; } .panel { padding: 18px; } }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"><i data-lucide="sparkles"></i></div>
+          <div>
+            <h1>Geek Store Intelligence</h1>
+            <p>Relatórios do data warehouse analítico</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <div class="status"><span class="status-dot"></span><span id="connection-status">Base analítica conectada</span></div>
+          <button class="icon-button" id="refresh-button" type="button" title="Atualizar painel" aria-label="Atualizar painel"><i data-lucide="refresh-cw"></i></button>
+          <button class="icon-button" id="theme-button" type="button" title="Alternar tema" aria-label="Alternar tema"><i data-lucide="sun-moon"></i></button>
+        </div>
+      </header>
+
+      <section class="hero" aria-labelledby="dashboard-title">
+        <div class="report-watermark" aria-hidden="true">
+          <img class="watermark-logo" src="/assets/ada_logo.png" alt="" />
+          <img class="watermark-swirl" src="/assets/swirl_green.png" alt="" />
+        </div>
+        <div>
+          <p class="eyebrow">Visão geral de vendas</p>
+          <h2 id="dashboard-title">Uma visão clara do ritmo de vendas da loja.</h2>
+          <p class="hero-copy">Monitore faturamento, comportamento dos clientes, demanda por produtos e preferências de pagamento diretamente das visões analíticas.</p>
+        </div>
+        <div class="hero-stat">
+          <strong id="report-period">--</strong>
+          <span>pedidos representados no data warehouse</span>
+        </div>
+      </section>
+
+      <section class="kpi-grid" aria-label="Indicadores-chave de desempenho">
+        <article class="kpi"><div class="kpi-head"><span>Faturamento total</span><i class="kpi-icon" data-lucide="wallet-cards"></i></div><strong id="revenue">--</strong><span>Volume de vendas pagas</span></article>
+        <article class="kpi"><div class="kpi-head"><span>Ticket médio</span><i class="kpi-icon" data-lucide="receipt-text"></i></div><strong id="average-ticket">--</strong><span>Faturamento por pedido concluído</span></article>
+        <article class="kpi"><div class="kpi-head"><span>Pedidos</span><i class="kpi-icon" data-lucide="shopping-bag"></i></div><strong id="orders">--</strong><span>Compras concluídas</span></article>
+        <article class="kpi"><div class="kpi-head"><span>Clientes</span><i class="kpi-icon" data-lucide="users-round"></i></div><strong id="customers">--</strong><span>Compradores únicos</span></article>
+      </section>
+
+      <section class="report-grid" id="dashboard-content">
+        <article class="panel">
+          <div class="panel-title"><div><h3>Vendas por dia da semana</h3><p>Comportamento do faturamento durante a semana</p></div><i data-lucide="chart-no-axes-column-increasing"></i></div>
+          <div class="chart-wrap"><canvas id="weekday-chart" aria-label="Faturamento por dia da semana" role="img"></canvas></div>
+        </article>
+        <article class="panel">
+          <div class="panel-title"><div><h3>Preferências de pagamento</h3><p>Participação no volume pago</p></div><i data-lucide="credit-card"></i></div>
+          <div class="chart-wrap"><canvas id="payment-chart" aria-label="Participação por meio de pagamento" role="img"></canvas></div>
+        </article>
+        <article class="panel">
+          <div class="panel-title"><div><h3>Perfil dos clientes</h3><p>Faturamento por faixa etária</p></div><i data-lucide="user-round-search"></i></div>
+          <div class="chart-wrap"><canvas id="age-chart" aria-label="Faturamento por faixa etária dos clientes" role="img"></canvas></div>
+        </article>
+        <article class="panel">
+          <div class="panel-title"><div><h3>Produtos em destaque</h3><p>Produtos com maior geração de faturamento</p></div><i data-lucide="package-search"></i></div>
+          <div class="bar-list" id="product-list"></div>
+        </article>
+        <article class="panel panel-wide">
+          <div class="panel-title"><div><h3>Desempenho por meio de pagamento</h3><p>Quantidade de pedidos e ticket médio em cada meio de pagamento</p></div><i data-lucide="table-properties"></i></div>
+          <div class="loading" id="loading-state">Carregando visões analíticas...</div>
+          <table id="payment-table" hidden>
+            <thead><tr><th>Método</th><th>Pedidos</th><th>Valor pago</th><th>Ticket médio</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </article>
+      </section>
+      <div class="error" id="error-state" role="alert"></div>
+      <p class="updated" id="updated-at">Aguardando dados analíticos.</p>
+    </main>
+
+    <script>
+      const charts = {};
+      const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+      const number = new Intl.NumberFormat("pt-BR");
+      const weekdayLabels = {
+        Monday: "Segunda-feira", Tuesday: "Terça-feira", Wednesday: "Quarta-feira", Thursday: "Quinta-feira",
+        Friday: "Sexta-feira", Saturday: "Sábado", Sunday: "Domingo",
+      };
+      const paymentMethodLabels = {
+        "Credit Card": "Cartão de crédito", "Debit Card": "Cartão de débito", Cash: "Dinheiro", Pix: "Pix",
+      };
+
+      function valueOf(value) { return Number(value || 0); }
+      function color(name) { return getComputedStyle(document.documentElement).getPropertyValue(`--cp-${name}`).trim(); }
+      function translateWeekday(name) { return weekdayLabels[name] || name; }
+      function translatePaymentMethod(name) { return paymentMethodLabels[name] || name; }
+      function chartOptions() {
+        return {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: color("text-muted"), boxWidth: 10, usePointStyle: true } } },
+          scales: {
+            x: { ticks: { color: color("text-muted") }, grid: { color: color("border") } },
+            y: { ticks: { color: color("text-muted"), callback: (value) => currency.format(value) }, grid: { color: color("border") } },
+          },
+        };
+      }
+      function replaceChart(id, config) {
+        if (charts[id]) charts[id].destroy();
+        charts[id] = new Chart(document.getElementById(id), config);
+      }
+      function groupAgePurchases(rows) {
+        const grouped = new Map();
+        rows.forEach((row) => grouped.set(row.CustomerAgeGroup, (grouped.get(row.CustomerAgeGroup) || 0) + valueOf(row.Revenue)));
+        return [...grouped.entries()].map(([label, revenue]) => ({ label, revenue }));
+      }
+      function renderProducts(products) {
+        const maximumRevenue = Math.max(...products.map((item) => valueOf(item.Revenue)), 1);
+        document.getElementById("product-list").innerHTML = products.map((item) => `
+          <div class="bar-row">
+            <span class="bar-label" title="${item.ProductName}">${item.ProductName}</span>
+            <span class="bar-value">${currency.format(valueOf(item.Revenue))}</span>
+            <div class="bar-track"><div class="bar-fill" style="width: ${valueOf(item.Revenue) / maximumRevenue * 100}%"></div></div>
+          </div>`).join("");
+      }
+      function renderPaymentTable(paymentMethods) {
+        const body = document.querySelector("#payment-table tbody");
+        body.innerHTML = paymentMethods.map((row) => `
+          <tr><td><span class="type-tag">${translatePaymentMethod(row.PaymentTypeName)}</span></td><td>${number.format(valueOf(row.OrderCount))}</td><td>${currency.format(valueOf(row.PaidAmount))}</td><td>${currency.format(valueOf(row.AverageTicket))}</td></tr>`).join("");
+        document.getElementById("loading-state").hidden = true;
+        document.getElementById("payment-table").hidden = false;
+      }
+      function renderDashboard(data) {
+        const { kpis, weekdaySales, agePurchases, productPerformance, paymentMethods } = data;
+        document.getElementById("revenue").textContent = currency.format(valueOf(kpis.Revenue));
+        document.getElementById("average-ticket").textContent = currency.format(valueOf(kpis.AverageTicket));
+        document.getElementById("orders").textContent = number.format(valueOf(kpis.OrderCount));
+        document.getElementById("customers").textContent = number.format(valueOf(kpis.UniqueCustomers));
+        document.getElementById("report-period").textContent = number.format(weekdaySales.reduce((sum, row) => sum + valueOf(row.OrderCount), 0));
+        document.getElementById("updated-at").textContent = `Atualizado em ${new Date(data.generatedAt).toLocaleString("pt-BR")}`;
+        document.getElementById("error-state").classList.remove("visible");
+        document.getElementById("connection-status").textContent = "Base analítica conectada";
+
+        replaceChart("weekday-chart", {
+          type: "bar",
+          data: { labels: weekdaySales.map((row) => translateWeekday(row.DayOfWeekName)), datasets: [{ label: "Faturamento", data: weekdaySales.map((row) => valueOf(row.Revenue)), backgroundColor: color("accent"), borderRadius: 6 }] },
+          options: chartOptions(),
+        });
+        replaceChart("payment-chart", {
+          type: "doughnut",
+          data: { labels: paymentMethods.map((row) => translatePaymentMethod(row.PaymentTypeName)), datasets: [{ data: paymentMethods.map((row) => valueOf(row.PaidAmount)), backgroundColor: [color("accent"), color("warning"), color("success"), color("link")], borderColor: color("surface"), borderWidth: 4 }] },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom", labels: { color: color("text-muted"), boxWidth: 10, usePointStyle: true } } } },
+        });
+        const ages = groupAgePurchases(agePurchases);
+        replaceChart("age-chart", {
+          type: "line",
+          data: { labels: ages.map((row) => row.label), datasets: [{ label: "Faturamento", data: ages.map((row) => row.revenue), borderColor: color("accent"), backgroundColor: color("accent-soft"), fill: true, tension: 0.35, pointBackgroundColor: color("accent"), pointRadius: 4 }] },
+          options: chartOptions(),
+        });
+        renderProducts(productPerformance);
+        renderPaymentTable(paymentMethods);
+      }
+      async function loadDashboard() {
+        const refreshButton = document.getElementById("refresh-button");
+        refreshButton.disabled = true;
+        refreshButton.setAttribute("aria-busy", "true");
+        try {
+          const response = await fetch("/api/report");
+          if (!response.ok) throw new Error((await response.json()).message || "Não foi possível obter os dados analíticos.");
+          renderDashboard(await response.json());
+        } catch (error) {
+          const errorState = document.getElementById("error-state");
+          errorState.textContent = error.message;
+          errorState.classList.add("visible");
+          document.getElementById("connection-status").textContent = "Base analítica indisponível";
+        } finally {
+          refreshButton.disabled = false;
+          refreshButton.removeAttribute("aria-busy");
+        }
+      }
+      document.getElementById("refresh-button").addEventListener("click", loadDashboard);
+      document.getElementById("theme-button").addEventListener("click", () => {
+        const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = nextTheme;
+        loadDashboard();
+      });
+      lucide.createIcons();
+      loadDashboard();
+    </script>
+  </body>
+</html>

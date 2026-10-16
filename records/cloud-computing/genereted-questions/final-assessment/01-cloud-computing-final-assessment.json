@@ -1,0 +1,36 @@
+{
+  "id": "7a29ad4f18284836b6bf58c527240371",
+  "type": "MULT",
+  "language": "",
+  "level": "Advanced",
+  "classification": [
+    {
+      "knowledgeArea": "",
+      "category": "",
+      "subCategory": ""
+    }
+  ],
+  "text": [
+    "De acordo com o **modelo de responsabilidade compartilhada**, qual tipo de serviço de nuvem coloca a **maior responsabilidade** sobre o **cliente**?"
+  ],
+  "alternatives": [
+    {
+      "id": "e6799c65-32a2-44a4-87b3-752020c00c72",
+      "text": "**IaaS** (infraestrutura como serviço)",
+      "feedback": "A **IaaS** coloca a **maior responsabilidade sobre o consumidor**, com o provedor de nuvem sendo responsável pelas questões básicas de segurança física, energia e conectividade.",
+      "correct": true
+    },
+    {
+      "id": "eb8c6fff-a2fa-4762-8234-bdae4936e86e",
+      "text": "**SaaS** (software como serviço)",
+      "feedback": "O **SaaS** coloca a **maior parte da responsabilidade com o provedor de nuvem**, com o cliente focado no uso do software fornecido, mas o provedor de nuvem responsável pela manutenção, pela segurança, pelas atualizações e assim por diante.",
+      "correct": false
+    },
+    {
+      "id": "4e8a6e57-6138-4434-b0fe-21d6e5ed0436",
+      "text": "**PaaS** (plataforma como serviço)",
+      "feedback": "O **PaaS** fica em algum lugar entre os demais e **distribui uniformemente a responsabilidade entre o provedor de nuvem e o consumidor**.",
+      "correct": false
+    }
+  ]
+}

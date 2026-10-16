@@ -1,0 +1,31 @@
+name: verify
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "ghcr.io/<org>/api-pagamentos@sha256:..."
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      ID: '^https://github.com/${{ github.repository_owner }}/'
+      ISS: https://token.actions.githubusercontent.com
+    steps:
+      - uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
+      - name: Assinatura
+        run: cosign verify "${{ inputs.image }}" --certificate-identity-regexp "$ID" --certificate-oidc-issuer "$ISS"
+      - name: SBOM
+        run: cosign verify-attestation "${{ inputs.image }}" --type cyclonedx --certificate-identity-regexp "$ID" --certificate-oidc-issuer "$ISS" > /dev/null
+      - name: Provenance SLSA (gerada pelo slsa-github-generator)
+        run: |
+          cosign verify-attestation "${{ inputs.image }}" --type slsaprovenance \
+            --certificate-identity-regexp '^https://github.com/slsa-framework/slsa-github-generator/' \
+            --certificate-oidc-issuer "$ISS" > /dev/null
