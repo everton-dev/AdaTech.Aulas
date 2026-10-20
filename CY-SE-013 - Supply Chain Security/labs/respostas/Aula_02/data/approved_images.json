@@ -1,0 +1,9 @@
+{
+  "docker": {
+    "approved_images": [
+      "cgr.dev/chainguard/static",
+      "gcr.io/distroless/base",
+      "registry.k8s.io/pause"
+    ]
+  }
+}

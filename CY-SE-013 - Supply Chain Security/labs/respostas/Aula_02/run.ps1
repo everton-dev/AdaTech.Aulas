@@ -53,4 +53,34 @@ if (Get-Command jq -ErrorAction SilentlyContinue) {
 }
 
 Write-Host ""
+Write-Host "== 6) Allowlist em data -> imagem fora da lista deve retornar 1 violacao"
+# diferente do approved_base fixo em security.rego, aqui a lista vem de
+# data/approved_images.json; trocar a lista = editar o JSON, sem tocar na policy
+#
+# "opa eval" avalia uma expressao Rego uma unica vez (sem rodar os *_test.rego). Parametros:
+#   --format pretty               -> imprime o resultado em formato legivel (JSON identado)
+#   --data policies/docker/allowlist.rego -> carrega a policy (define data.docker.allowlist.deny)
+#   --data data/approved_images.json      -> carrega a allowlist externa em data.docker.approved_images
+#   --input inputs/image_base_nao_aprovada.json -> arquivo que vira o "input" dentro da policy
+#   "data.docker.allowlist.deny"  -> caminho/expressao a ser avaliada e impressa (o conjunto de violacoes)
+opa eval --format pretty --data policies/docker/allowlist.rego --data data/approved_images.json --input inputs/image_base_nao_aprovada.json "data.docker.allowlist.deny"
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+# mesma chamada, mas com --format raw (devolve so o valor, sem aspas/JSON) e contando
+# quantas violacoes vieram (count(...)) para comparar com o numero esperado no if abaixo
+$countNaoAprovada = opa eval --format raw --data policies/docker/allowlist.rego --data data/approved_images.json --input inputs/image_base_nao_aprovada.json "count(data.docker.allowlist.deny)"
+if ($countNaoAprovada -ne '1') {
+    Stop-WithError "esperado 1 violacao para imagem fora da allowlist, obtido $countNaoAprovada"
+}
+
+Write-Host ""
+Write-Host "== 7) Allowlist em data -> imagem na lista deve retornar conjunto vazio"
+# mesmos parametros do passo 6, trocando so o --input: desta vez a imagem esta na
+# allowlist, entao data.docker.allowlist.deny deve vir vazio (count == 0)
+$countAprovada = opa eval --format raw --data policies/docker/allowlist.rego --data data/approved_images.json --input inputs/image_base_aprovada.json "count(data.docker.allowlist.deny)"
+if ($countAprovada -ne '0') {
+    Stop-WithError "esperado 0 violacoes para imagem aprovada, obtido $countAprovada"
+}
+
+Write-Host ""
 Write-Host "Lab 02 OK"

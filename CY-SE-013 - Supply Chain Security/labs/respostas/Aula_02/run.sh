@@ -37,4 +37,32 @@ else
   echo "   jq ausente, pulando resumo de cobertura"
 fi
 
+echo; echo "== 6) Allowlist em data -> imagem fora da lista deve retornar 1 violacao"
+# diferente do approved_base fixo em security.rego, aqui a lista vem de
+# data/approved_images.json; trocar a lista = editar o JSON, sem tocar na policy
+opa eval --format pretty \
+  --data policies/docker/allowlist.rego \
+  --data data/approved_images.json \
+  --input inputs/image_base_nao_aprovada.json \
+  "data.docker.allowlist.deny"
+
+COUNT_NAO_APROVADA=$(opa eval --format raw \
+  --data policies/docker/allowlist.rego \
+  --data data/approved_images.json \
+  --input inputs/image_base_nao_aprovada.json \
+  "count(data.docker.allowlist.deny)")
+if [ "$COUNT_NAO_APROVADA" != "1" ]; then
+  echo "ERRO: esperado 1 violacao para imagem fora da allowlist, obtido $COUNT_NAO_APROVADA"; exit 1
+fi
+
+echo; echo "== 7) Allowlist em data -> imagem na lista deve retornar conjunto vazio"
+COUNT_APROVADA=$(opa eval --format raw \
+  --data policies/docker/allowlist.rego \
+  --data data/approved_images.json \
+  --input inputs/image_base_aprovada.json \
+  "count(data.docker.allowlist.deny)")
+if [ "$COUNT_APROVADA" != "0" ]; then
+  echo "ERRO: esperado 0 violacoes para imagem aprovada, obtido $COUNT_APROVADA"; exit 1
+fi
+
 echo; echo "Lab 02 OK"

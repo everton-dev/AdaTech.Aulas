@@ -1,0 +1,5 @@
+{
+  "config": {
+    "Image": "cgr.dev/chainguard/static:latest"
+  }
+}
