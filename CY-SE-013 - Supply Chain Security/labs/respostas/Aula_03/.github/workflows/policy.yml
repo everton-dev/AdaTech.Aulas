@@ -1,12 +1,17 @@
-name: Policy Gate
+name: Aula_03_Policy_Gate
 
 on:
   pull_request:
     branches: [main]
+    paths:
+      - "CY-SE-013 - Supply Chain Security/labs/respostas/Aula_03/**"
 
 jobs:
   policy-check:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "CY-SE-013 - Supply Chain Security/labs/respostas/Aula_03"
     steps:
       # Actions fixadas por SHA de commit (nao por tag) — supply chain do proprio pipeline
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -25,5 +30,12 @@ jobs:
       - name: Unit tests das politicas
         run: opa test policies/ -v
 
-      - name: Conftest em manifests Kubernetes
-        run: conftest test manifests/*.yaml --policy policies/kubernetes/
+      - name: Conftest no pod seguro (deve passar)
+        run: conftest test manifests/good-pod.yaml --policy policies/kubernetes/
+
+      - name: Conftest no pod inseguro (deve ser negado pela politica)
+        run: |
+          if conftest test manifests/bad-pod.yaml --policy policies/kubernetes/; then
+            echo "ERRO: pod inseguro deveria ser negado pela politica"
+            exit 1
+          fi
