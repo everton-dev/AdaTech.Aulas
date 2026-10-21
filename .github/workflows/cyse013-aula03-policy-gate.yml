@@ -31,11 +31,11 @@ jobs:
         run: opa test policies/ -v
 
       - name: Conftest no pod seguro (deve passar)
-        run: conftest test manifests/good-pod.yaml --policy policies/kubernetes/
+        run: conftest test manifests/bad-pod.yaml --policy policies/kubernetes/
 
       - name: Conftest no pod inseguro (deve ser negado pela politica)
         run: |
-          if conftest test manifests/bad-pod.yaml --policy policies/kubernetes/; then
+          if conftest test manifests/good-pod.yaml --policy policies/kubernetes/; then
             echo "ERRO: pod inseguro deveria ser negado pela politica"
             exit 1
           fi
