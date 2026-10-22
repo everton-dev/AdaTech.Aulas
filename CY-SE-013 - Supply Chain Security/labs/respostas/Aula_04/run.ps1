@@ -1,5 +1,9 @@
 # Lab 04 - gerar e analisar SBOMs. Requer: docker (daemon ativo), syft, trivy, jq, conftest, opa.
 $ErrorActionPreference = 'Stop'
+# Sem isso, no PowerShell 7.3+ um exit code != 0 de comando nativo (ex.: conftest
+# com "deny") vira excecao terminante por causa do $ErrorActionPreference acima,
+# quebrando o script no passo 5 mesmo quando o erro e esperado (ver comentario ali).
+$PSNativeCommandUseErrorActionPreference = $false
 Set-Location $PSScriptRoot
 
 $Image = 'nginx:1.27.0'
