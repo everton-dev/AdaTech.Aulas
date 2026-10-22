@@ -17,6 +17,7 @@ $RECYCLE.BIN/
 # ===== .NET =====
 bin/
 obj/
+publish/
 *.pdb
 *.cache
 
