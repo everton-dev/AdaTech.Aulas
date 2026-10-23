@@ -11,7 +11,14 @@ Set-Location $PSScriptRoot
 $Image = 'ada-supply-demo:local'
 $Publish = './publish'
 # filtro jq reutilizado varias vezes abaixo para nao listar arquivos individuais como se fossem pacotes (DRY)
-$PkgFilter = '.components[] | select(.type != "file")'
+# Usa $t (via --arg) em vez de "file" literal, e @tsv em vez de "\(.name) \(.version)":
+# no Windows PowerShell 5.1 (ao contrario do PowerShell 7+), aspas duplas literais dentro
+# de um argumento passado a um executavel nativo como o jq sao removidas no encode da
+# linha de comando - "file" vira file (jq tenta chama-lo como funcao) e a interpolacao
+# "\(.name)" quebra. Escapar as aspas (\" ou "") resolve no PS 5.1 mas quebra no PS 7+,
+# que ja faz esse escaping sozinho. Passar os literais via --arg evita aspas no filtro
+# inteiramente, funcionando igual nas duas versoes.
+$PkgFilter = '.components[] | select(.type != $t)'
 
 # ======================================================================
 # PARTE A - Analise direta dos arquivos publicados, sem Docker
@@ -34,12 +41,12 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host ""
 Write-Host "== A3) Inspecionar"
 Write-Host -NoNewline "componentes CycloneDX (syft, total):   "; jq '.components | length' sbom-fs.cdx.json
-Write-Host -NoNewline "componentes CycloneDX (syft, pacotes): "; jq "[$PkgFilter] | length" sbom-fs.cdx.json
+Write-Host -NoNewline "componentes CycloneDX (syft, pacotes): "; jq --arg t file "[$PkgFilter] | length" sbom-fs.cdx.json
 Write-Host -NoNewline "componentes CycloneDX (trivy):         "; jq '.components | length' sbom-fs-trivy.cdx.json
 Write-Host -NoNewline "packages SPDX (syft):                  "; jq '.packages | length' sbom-fs.spdx.json
 Write-Host "pacote plantado para a demo (Newtonsoft.Json):"
-$plantedFilter = "$PkgFilter | " + 'select(.name | test("newtonsoft"; "i")) | "\(.name) \(.version)"'
-jq -r $plantedFilter sbom-fs.cdx.json
+$plantedFilter = "$PkgFilter | " + 'select(.name | test($re; $fl)) | [.name, .version] | @tsv'
+jq -r --arg t file --arg re newtonsoft --arg fl i $plantedFilter sbom-fs.cdx.json
 
 Write-Host ""
 Write-Host "== A4) Politica Rego de vulnerabilidade sobre os arquivos publicados (antes de existir qualquer imagem)"
@@ -72,23 +79,23 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host ""
 Write-Host "== B3) Inspecionar (Syft inclui type=file no CycloneDX; filtramos pacotes)"
 Write-Host -NoNewline "componentes CycloneDX (syft, total):   "; jq '.components | length' sbom.cdx.json
-Write-Host -NoNewline "componentes CycloneDX (syft, pacotes): "; jq "[$PkgFilter] | length" sbom.cdx.json
+Write-Host -NoNewline "componentes CycloneDX (syft, pacotes): "; jq --arg t file "[$PkgFilter] | length" sbom.cdx.json
 Write-Host -NoNewline "componentes CycloneDX (trivy):         "; jq '.components | length' sbom-trivy.cdx.json
 Write-Host -NoNewline "packages SPDX (syft):                  "; jq '.packages | length' sbom.spdx.json
 
 Write-Host "primeiros 5 pacotes:"
-$namesFilter = "$PkgFilter | " + '"\(.name) \(.version)"'
-jq -r $namesFilter sbom.cdx.json | Sort-Object | Select-Object -First 5
+$namesFilter = "$PkgFilter | " + '[.name, .version] | @tsv'
+jq -r --arg t file $namesFilter sbom.cdx.json | Sort-Object | Select-Object -First 5
 
 Write-Host "pacote plantado para a demo (Newtonsoft.Json):"
-jq -r $plantedFilter sbom.cdx.json
+jq -r --arg t file --arg re newtonsoft --arg fl i $plantedFilter sbom.cdx.json
 
 Write-Host ""
 Write-Host "== B4) Comparar campos de um componente nos dois formatos (mesmo pacote, comparacao justa)"
-$sampleName = jq -r "[$PkgFilter][0].name" sbom.cdx.json
+$sampleName = jq -r --arg t file "[$PkgFilter][0].name" sbom.cdx.json
 Write-Host "Pacote de exemplo: $sampleName"
 $cycloneFilter = "[$PkgFilter] | map(select(.name == " + '$n' + ")) | .[0] | keys"
-Write-Host "CycloneDX:"; jq --arg n $sampleName $cycloneFilter sbom.cdx.json
+Write-Host "CycloneDX:"; jq --arg n $sampleName --arg t file $cycloneFilter sbom.cdx.json
 Write-Host "SPDX:";      jq --arg n $sampleName '.packages | map(select(.name == $n)) | .[0] | keys' sbom.spdx.json
 
 Write-Host ""
