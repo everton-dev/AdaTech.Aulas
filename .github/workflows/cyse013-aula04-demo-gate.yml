@@ -96,8 +96,29 @@ jobs:
           echo "pacote plantado para a demo (Newtonsoft.Json):"
           jq -r "$PKG | select(.name | test(\"newtonsoft\"; \"i\")) | \"\(.name) \(.version)\"" sbom.cdx.json
 
-      - name: "B5) Politica de licenca/PURL (deve PASSAR)"
-        run: conftest test sbom.cdx.json --policy policies/license/
+      - name: "B5) Politica de licenca/PURL (1 falha residual esperada: 'ubuntu' sem PURL)"
+        # A imagem de runtime do Azure Functions e baseada em Ubuntu; o componente
+        # 'ubuntu' (metadado de release do SO, nao um pacote de fato) nunca tem PURL,
+        # entao essa unica falha e esperada e inofensiva (ver README.md da demo).
+        # Qualquer OUTRA falha (ex.: GPL-3 numa dependencia NuGet de verdade) deve
+        # continuar bloqueando o gate de verdade.
+        run: |
+          set +e
+          OUTPUT=$(conftest test sbom.cdx.json --policy policies/license/ 2>&1)
+          STATUS=$?
+          echo "$OUTPUT"
+          set -e
+          if [ $STATUS -eq 0 ]; then
+            echo "OK: nenhuma falha de licenca (nem a residual do 'ubuntu')."
+            exit 0
+          fi
+          UNEXPECTED=$(echo "$OUTPUT" | grep '^FAIL' | grep -v "Componente 'ubuntu' sem PURL" || true)
+          if [ -n "$UNEXPECTED" ]; then
+            echo "ERRO: falha(s) de licenca inesperada(s):"
+            echo "$UNEXPECTED"
+            exit 1
+          fi
+          echo "OK: unica falha foi a residual esperada ('ubuntu' sem PURL)."
 
       - name: "B6) Politica de vulnerabilidade sobre a imagem (deve BLOQUEAR)"
         run: |
