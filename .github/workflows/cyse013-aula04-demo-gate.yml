@@ -1,0 +1,119 @@
+name: Aula_04_Demo_Supply_Chain_Gate
+
+# So dispara em push direto para main, e so quando algo dentro da propria
+# demo muda — igual ao padrao ja usado em cyse013-aula03-policy-gate.yml.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "CY-SE-013 - Supply Chain Security/labs/respostas/demos/Aula_04/**"
+
+permissions:
+  contents: read
+
+jobs:
+  demo-gate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "CY-SE-013 - Supply Chain Security/labs/respostas/demos/Aula_04"
+    steps:
+      # Actions fixadas por SHA de commit (nao por tag) — supply chain do proprio pipeline
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Instalar Syft
+        run: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Instalar Trivy
+        run: curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Instalar OPA
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          chmod +x opa && sudo mv opa /usr/local/bin/
+
+      - name: Instalar Conftest
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/open-policy-agent/conftest/releases/latest | grep tag_name | cut -d '"' -f 4)
+          curl -LO "https://github.com/open-policy-agent/conftest/releases/download/${LATEST}/conftest_${LATEST#v}_Linux_x86_64.tar.gz"
+          tar xzf conftest_*.tar.gz && sudo mv conftest /usr/local/bin/
+
+      # ======================================================================
+      # PARTE A - Analise direta dos arquivos publicados, sem Docker
+      # ======================================================================
+
+      - name: "A0) dotnet publish"
+        run: dotnet publish ./app -c Release -o ./publish
+
+      - name: "A1) SBOM com Syft (sem imagem)"
+        run: syft dir:./publish -o cyclonedx-json=sbom-fs.cdx.json -o spdx-json=sbom-fs.spdx.json -q
+
+      - name: "A2) SBOM com Trivy (filesystem scan)"
+        run: trivy fs --timeout 15m --scanners vuln --format cyclonedx --output sbom-fs-trivy.cdx.json -q ./publish
+
+      - name: "A3) Inspecionar"
+        run: |
+          PKG='.components[] | select(.type != "file")'
+          echo -n "componentes CycloneDX (syft, total):   "; jq '.components | length' sbom-fs.cdx.json
+          echo -n "componentes CycloneDX (syft, pacotes): "; jq "[$PKG] | length" sbom-fs.cdx.json
+          echo "pacote plantado para a demo (Newtonsoft.Json):"
+          jq -r "$PKG | select(.name | test(\"newtonsoft\"; \"i\")) | \"\(.name) \(.version)\"" sbom-fs.cdx.json
+
+      - name: "A4) Politica de vulnerabilidade sobre os arquivos publicados (deve BLOQUEAR)"
+        # Gate real: a demo so faz sentido se Newtonsoft.Json 12.0.1 (CVE-2024-21907,
+        # HIGH) continuar sendo detectada. Se o conftest passar aqui, a demo quebrou
+        # (dependencia foi corrigida/trocada) e o workflow deve falhar para avisar.
+        run: |
+          if conftest test sbom-fs-trivy.cdx.json --policy policies/vuln/; then
+            echo "ERRO: esperava-se que a politica de vulnerabilidade bloqueasse (CVE-2024-21907)"
+            exit 1
+          fi
+
+      # ======================================================================
+      # PARTE B - Mesma analise, agora sobre a imagem Docker da aplicacao
+      # ======================================================================
+
+      - name: "B0) Build da imagem"
+        run: docker build -q -t ada-supply-demo:local ./app
+
+      - name: "B1) SBOM com Syft (imagem)"
+        run: syft ada-supply-demo:local -o cyclonedx-json=sbom.cdx.json -o spdx-json=sbom.spdx.json -q
+
+      - name: "B2) SBOM com Trivy (imagem)"
+        run: trivy image --timeout 15m --scanners vuln --format cyclonedx --output sbom-trivy.cdx.json -q ada-supply-demo:local
+
+      - name: "B3) Inspecionar"
+        run: |
+          PKG='.components[] | select(.type != "file")'
+          echo -n "componentes CycloneDX (syft, total):   "; jq '.components | length' sbom.cdx.json
+          echo -n "componentes CycloneDX (syft, pacotes): "; jq "[$PKG] | length" sbom.cdx.json
+          echo "pacote plantado para a demo (Newtonsoft.Json):"
+          jq -r "$PKG | select(.name | test(\"newtonsoft\"; \"i\")) | \"\(.name) \(.version)\"" sbom.cdx.json
+
+      - name: "B5) Politica de licenca/PURL (deve PASSAR)"
+        run: conftest test sbom.cdx.json --policy policies/license/
+
+      - name: "B6) Politica de vulnerabilidade sobre a imagem (deve BLOQUEAR)"
+        run: |
+          if conftest test sbom-trivy.cdx.json --policy policies/vuln/; then
+            echo "ERRO: esperava-se que a politica de vulnerabilidade bloqueasse (CVE-2024-21907)"
+            exit 1
+          fi
+
+      - name: "7) Testes unitarios das politicas"
+        run: |
+          opa test policies/license/ -v
+          opa test policies/vuln/ -v
+
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        if: always()
+        with:
+          name: sboms-aula04-demo
+          path: |
+            CY-SE-013 - Supply Chain Security/labs/respostas/demos/Aula_04/sbom*.json
