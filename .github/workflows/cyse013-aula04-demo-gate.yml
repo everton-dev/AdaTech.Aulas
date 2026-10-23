@@ -6,6 +6,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "CY-SE-013 - Supply Chain Security/.github/workflows/cyse013-aula04-demo-gate.yml"
       - "CY-SE-013 - Supply Chain Security/labs/respostas/demos/Aula_04/**"
 
 permissions:
