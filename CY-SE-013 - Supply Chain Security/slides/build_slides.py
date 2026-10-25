@@ -31,6 +31,7 @@ C_BLUE = RGBColor(0x23, 0x71, 0xFF)
 C_GREEN = RGBColor(0xA6, 0xF7, 0x50)
 C_GREENL = RGBColor(0xDA, 0xF9, 0xDA)
 C_RED = RGBColor(0xFF, 0x23, 0x4F)
+C_AMBER = RGBColor(0xFF, 0xB8, 0x2E)
 C_WHITE = RGBColor(0xFF, 0xFD, 0xF8)
 C_GRAY = RGBColor(0x6A, 0x70, 0x7D)
 C_LGRAY = RGBColor(0xEC, 0xED, 0xF3)
@@ -159,7 +160,10 @@ def tb(sl, x, y, w, h, runs, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP,
             r.font.size = Pt(st.get("sz", 14))
             r.font.bold = st.get("bold", False)
             r.font.italic = st.get("italic", False)
+            r.font.underline = st.get("underline", False)
             r.font.color.rgb = st.get("color", C_DARK)
+            if st.get("url"):
+                r.hyperlink.address = st["url"]
     return box
 
 
@@ -321,7 +325,10 @@ def build_combinado(prs, titulo, idx):
 
 def _bullet_runs(b, sz):
     if isinstance(b, tuple):
-        return [[(b[0] + " ", {"font": F_MED, "sz": sz}), (b[1], {"font": F_REG, "sz": sz, "color": C_GRAY})]]
+        title_st = {"font": F_MED, "sz": sz}
+        if len(b) > 2 and b[2]:
+            title_st.update(color=C_BLUE, underline=True, url=b[2])
+        return [[(b[0] + " ", title_st), (b[1], {"font": F_REG, "sz": sz, "color": C_GRAY})]]
     return [[(b, {"font": F_REG, "sz": sz})]]
 
 
@@ -333,23 +340,52 @@ def _analogia(sl, ay, ah, texto, label="💡 ANALOGIA"):
        [[(texto, {"font": F_REG, "sz": 13, "italic": True})]], line_spacing=1.1)
 
 
-def build_content(prs, titulo_aula, idx, titulo, bullets, analogia=None, kicker=None):
+def _glossario(sl, gy, gh, siglas):
+    """Faixa de rodapé com siglas usadas no slide; siglas = [(sigla, significado)]."""
+    rrect(sl, MX, gy, SW - 2 * MX, gh, fill=C_LGRAY, radius=0.06)
+    tb(sl, MX + 200000, gy + 80000, SW - 2 * MX - 400000, 200000,
+       [[("GLOSSÁRIO  ", {"font": F_MED, "sz": 9, "color": C_BLUE})]])
+    texto = "   ·   ".join(f"{sigla} — {significado}" for sigla, significado in siglas)
+    tb(sl, MX + 200000, gy + 270000, SW - 2 * MX - 400000, gh - 330000,
+       [[(texto, {"font": F_REG, "sz": 9, "color": C_GRAY})]], line_spacing=1.1)
+
+
+def _glossario_height(siglas):
+    """Estima a altura (EMU) necessária para a faixa de glossário, de acordo com o nº/tamanho das siglas."""
+    texto = "   ·   ".join(f"{sigla} — {significado}" for sigla, significado in siglas)
+    box_w = SW - 2 * MX - 400000
+    char_w = 57500  # medido para Segoe UI 9pt, com folga de segurança
+    lines = max(1, -(-(len(texto) * char_w) // box_w))
+    return 330000 + lines * 130000
+
+
+def build_content(prs, titulo_aula, idx, titulo, bullets, analogia=None, kicker=None, glossario=None, bullet_colors=None, intro=None):
     sl = add_slide(prs)
     y = header(sl, titulo, kicker)
     body_h = SH - y - FOOT_H
+    if intro:
+        tb(sl, MX, y, SW - 2 * MX, 320000, [[(intro, {"font": F_REG, "sz": 13, "color": C_GRAY})]], line_spacing=1.05)
+        y += 380000
+        body_h -= 380000
     ana_h = 900000 if analogia else 0
-    bullets_h = body_h - ana_h - (150000 if analogia else 0)
+    glo_h = _glossario_height(glossario) if glossario else 0
+    reserved = ana_h + glo_h
+    reserved += 150000 if analogia else 0
+    reserved += 90000 if (analogia and glossario) else (150000 if glossario else 0)
+    bullets_h = body_h - reserved
     each = min(bullets_h // max(len(bullets), 1), 620000)
     for i, b in enumerate(bullets):
         by = y + i * each
         cd = 300000
-        oval(sl, MX, by + 30000, cd, cd, fill=C_BLUE)
+        oval(sl, MX, by + 30000, cd, cd, fill=(bullet_colors[i] if bullet_colors else C_BLUE))
         tb(sl, MX, by + 30000, cd, cd, [[(str(i + 1), {"font": F_MED, "sz": 13, "color": C_WHITE, "bold": True})]],
            align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
         tb(sl, MX + cd + 200000, by, SW - 2 * MX - cd - 200000, each, _bullet_runs(b, 14),
            anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.05)
+    if glossario:
+        _glossario(sl, SH - FOOT_H - glo_h, glo_h, glossario)
     if analogia:
-        _analogia(sl, SH - FOOT_H - ana_h, ana_h, analogia)
+        _analogia(sl, SH - FOOT_H - glo_h - (90000 if glossario else 0) - ana_h, ana_h, analogia)
     footer(sl, titulo_aula, idx)
     return sl
 
@@ -391,12 +427,16 @@ def build_image(prs, titulo_aula, idx, titulo, image, bullets=None, caption=None
     return sl
 
 
-def build_flow(prs, titulo_aula, idx, titulo, steps, kicker=None, analogia=None):
+def build_flow(prs, titulo_aula, idx, titulo, steps, kicker=None, analogia=None, glossario=None):
     """Diagrama nativo: caixas em sequência com setas; steps = [(rótulo, descrição)]."""
     sl = add_slide(prs)
     y = header(sl, titulo, kicker)
     body_h = SH - y - FOOT_H
     ana_h = 900000 if analogia else 0
+    glo_h = _glossario_height(glossario) if glossario else 0
+    reserved = ana_h + glo_h
+    reserved += 150000 if analogia else 0
+    reserved += 90000 if (analogia and glossario) else (150000 if glossario else 0)
     n = len(steps)
     arrow_w = 260000
     gap = 90000
@@ -413,17 +453,19 @@ def build_flow(prs, titulo_aula, idx, titulo, steps, kicker=None, analogia=None)
            align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
         tb(sl, x + 110000, top + 400000, box_w - 220000, 300000,
            [[(label, {"font": F_MED, "sz": 13 if n <= 4 else 11, "color": C_WHITE})]], anchor=MSO_ANCHOR.MIDDLE)
-        tb(sl, x, top + box_h + 150000, box_w, body_h - box_h - 330000 - ana_h,
+        tb(sl, x, top + box_h + 150000, box_w, body_h - box_h - 330000 - reserved,
            [[(desc, {"font": F_REG, "sz": 11, "color": C_GRAY})]], line_spacing=1.05)
         if i < n - 1:
             arrow(sl, x + box_w + gap, top + box_h // 2 - 110000, arrow_w, 220000, C_GREEN)
+    if glossario:
+        _glossario(sl, SH - FOOT_H - glo_h, glo_h, glossario)
     if analogia:
-        _analogia(sl, SH - FOOT_H - ana_h, ana_h, analogia)
+        _analogia(sl, SH - FOOT_H - glo_h - (90000 if glossario else 0) - ana_h, ana_h, analogia)
     footer(sl, titulo_aula, idx)
     return sl
 
 
-def build_code(prs, titulo_aula, idx, titulo, intro, lines, kicker=None, lang="bash"):
+def build_code(prs, titulo_aula, idx, titulo, intro, lines, kicker=None, lang="bash", analogia=None, glossario=None, code_sz=None):
     sl = add_slide(prs)
     y = header(sl, titulo, kicker)
     body_h = SH - y - FOOT_H
@@ -431,6 +473,12 @@ def build_code(prs, titulo_aula, idx, titulo, intro, lines, kicker=None, lang="b
         tb(sl, MX, y, SW - 2 * MX, 320000, [[(intro, {"font": F_REG, "sz": 13, "color": C_GRAY})]], line_spacing=1.05)
         y += 380000
         body_h -= 380000
+    ana_h = 900000 if analogia else 0
+    glo_h = _glossario_height(glossario) if glossario else 0
+    reserved = ana_h + glo_h
+    reserved += 150000 if analogia else 0
+    reserved += 90000 if (analogia and glossario) else (150000 if glossario else 0)
+    body_h -= reserved
     rrect(sl, MX, y, SW - 2 * MX, body_h, fill=C_DARK, radius=0.03)
     bar_h = 260000
     rrect(sl, MX, y, SW - 2 * MX, bar_h, fill=C_TERM, radius=0.03)
@@ -438,7 +486,7 @@ def build_code(prs, titulo_aula, idx, titulo, intro, lines, kicker=None, lang="b
         oval(sl, MX + 150000 + i * 200000, y + 80000, 100000, 100000, fill=col)
     tb(sl, MX, y, SW - 2 * MX, bar_h, [[(lang, {"font": F_CODE, "sz": 9, "color": C_GRAY})]],
        align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-    sz = 11 if len(lines) <= 12 else 10 if len(lines) <= 15 else 9
+    sz = code_sz if code_sz else (11 if len(lines) <= 12 else 10 if len(lines) <= 15 else 9)
     paras = []
     for ln in lines:
         s = ln.strip()
@@ -446,34 +494,88 @@ def build_code(prs, titulo_aula, idx, titulo, intro, lines, kicker=None, lang="b
             paras.append([(ln, {"font": F_CODE, "sz": sz, "color": C_GRAY})])
         elif s == "":
             paras.append([(" ", {"font": F_CODE, "sz": 6, "color": C_DARK})])
+        elif s.startswith("!"):
+            paras.append([(ln[1:], {"font": F_CODE, "sz": sz, "color": C_RED})])
         elif s.startswith(">"):
             paras.append([(ln, {"font": F_CODE, "sz": sz, "color": C_WHITE})])
         else:
             paras.append([(ln, {"font": F_CODE, "sz": sz, "color": C_GREEN})])
     tb(sl, MX + 200000, y + bar_h + 100000, SW - 2 * MX - 400000, body_h - bar_h - 200000, paras, line_spacing=1.12)
+    if glossario:
+        _glossario(sl, SH - FOOT_H - glo_h, glo_h, glossario)
+    if analogia:
+        _analogia(sl, SH - FOOT_H - glo_h - (90000 if glossario else 0) - ana_h, ana_h, analogia)
     footer(sl, titulo_aula, idx)
     return sl
 
 
-def build_comparison(prs, titulo_aula, idx, titulo, a_title, a_items, b_title, b_items, kicker=None):
+def build_comparison(prs, titulo_aula, idx, titulo, a_title, a_items, b_title, b_items, kicker=None, analogia=None, glossario=None):
     sl = add_slide(prs)
     y = header(sl, titulo, kicker)
     body_h = SH - y - FOOT_H
+    ana_h = 900000 if analogia else 0
+    glo_h = _glossario_height(glossario) if glossario else 0
+    reserved = ana_h + glo_h
+    reserved += 150000 if analogia else 0
+    reserved += 90000 if (analogia and glossario) else (150000 if glossario else 0)
+    cards_h = body_h - reserved
     gap = 260000
     col_w = (SW - 2 * MX - gap) // 2
     for x, ct, items, accent in [(MX, a_title, a_items, C_BLUE), (MX + col_w + gap, b_title, b_items, C_GREEN)]:
-        rrect(sl, x, y, col_w, body_h, fill=C_WHITE, line=C_LGRAY, radius=0.04, lw=9525)
+        rrect(sl, x, y, col_w, cards_h, fill=C_WHITE, line=C_LGRAY, radius=0.04, lw=9525)
         rrect(sl, x, y, col_w, 320000, fill=accent, radius=0.04)
-        tb(sl, x + 150000, y, col_w - 300000, 320000,
+        badge_d = 220000
+        oval(sl, x + col_w - 150000 - badge_d, y + (320000 - badge_d) // 2, badge_d, badge_d, fill=C_WHITE)
+        tb(sl, x + col_w - 150000 - badge_d, y + (320000 - badge_d) // 2, badge_d, badge_d,
+           [[(ct[0].upper(), {"font": F_MED, "sz": 12, "color": accent, "bold": True})]],
+           align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+        tb(sl, x + 150000, y, col_w - 300000 - badge_d - 100000, 320000,
            [[(ct, {"font": F_MED, "sz": 14, "color": C_WHITE if accent == C_BLUE else C_DARK})]], anchor=MSO_ANCHOR.MIDDLE)
         iy = y + 460000
-        each = (body_h - 560000) // max(len(items), 1)
+        each = (cards_h - 560000) // max(len(items), 1)
         for it in items:
             dot = 140000
             oval(sl, x + 150000, iy + (each - dot) // 2, dot, dot, fill=accent)
             tb(sl, x + 150000 + dot + 130000, iy, col_w - 300000 - dot - 130000, each,
                [[(it, {"font": F_REG, "sz": 12})]], anchor=MSO_ANCHOR.MIDDLE)
             iy += each
+    if glossario:
+        _glossario(sl, SH - FOOT_H - glo_h, glo_h, glossario)
+    if analogia:
+        _analogia(sl, SH - FOOT_H - glo_h - (90000 if glossario else 0) - ana_h, ana_h, analogia)
+    footer(sl, titulo_aula, idx)
+    return sl
+
+
+def build_tools_intro(prs, titulo_aula, idx, titulo, tools, kicker=None):
+    sl = add_slide(prs)
+    y = header(sl, titulo, kicker)
+    body_h = SH - y - FOOT_H
+    gap = 260000
+    col_w = (SW - 2 * MX - gap) // 2
+    link_h = 240000
+    for i, t in enumerate(tools):
+        x = MX + i * (col_w + gap)
+        accent = t["cor"]
+        rrect(sl, x, y, col_w, body_h, fill=C_WHITE, line=C_LGRAY, radius=0.04, lw=9525)
+        rrect(sl, x, y, col_w, 320000, fill=accent, radius=0.04)
+        badge_d = 220000
+        oval(sl, x + 150000, y + (320000 - badge_d) // 2, badge_d, badge_d, fill=C_WHITE)
+        tb(sl, x + 150000, y + (320000 - badge_d) // 2, badge_d, badge_d,
+           [[(t["letra"], {"font": F_MED, "sz": 13, "color": accent, "bold": True})]],
+           align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+        tb(sl, x + 150000 + badge_d + 130000, y, col_w - 300000 - badge_d - 130000, 320000,
+           [[(t["nome"], {"font": F_MED, "sz": 15, "color": C_WHITE if accent == C_BLUE else C_DARK, "bold": True})]],
+           anchor=MSO_ANCHOR.MIDDLE)
+        desc_y = y + 460000
+        desc_h = body_h - 460000 - link_h - 160000
+        tb(sl, x + 150000, desc_y, col_w - 300000, desc_h,
+           [[(t["descricao"], {"font": F_REG, "sz": 13})]], line_spacing=1.25)
+        link_y = y + body_h - link_h - 100000
+        rrect(sl, x + 150000, link_y, col_w - 300000, link_h, fill=C_LGRAY, radius=0.3)
+        tb(sl, x + 150000, link_y, col_w - 300000, link_h,
+           [[("🔗 " + t["link_label"], {"font": F_MED, "sz": 11, "color": C_BLUE, "underline": True, "url": t["url"]})]],
+           align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
     footer(sl, titulo_aula, idx)
     return sl
 
@@ -899,13 +1001,33 @@ AULAS = [
     {"num": 5, "data": "Segunda, 26/10", "titulo": "Análise de SBOM e Gestão de Dependências",
      "subtitulo": "Como descobrir em minutos se você é afetado por uma nova CVE",
      "slides": [
-         {"type": "content", "kicker": "Problema gerador", "titulo": "Log4Shell em segundos ou em dias?",
-          "bullets": [("Gestão imatura:", "dias de grep em repositórios"),
-                      ("Gestão madura:", "dashboard lista apps afetadas e versões"),
-                      ("A diferença:", "não são os engenheiros, é a infraestrutura de governança"),
-                      ("Hoje:", "transformar inventário em decisão e remediação")],
-          "analogia": "Ter a lista de ingredientes é o primeiro passo; o que salva é o sistema que cruza o recall com todos os produtos e já aciona a retirada.",
+         {"type": "comparison", "kicker": "Problema gerador", "titulo": "Log4Shell em segundos ou em dias?",
+          "a_title": "Gestão imatura",
+          "a_items": ["grep -r \"log4j-core\" repositório por repositório",
+                       "Dias para mapear apps com a CVE-2021-44228",
+                       "Resposta depende da memória de alguém da equipe"],
+          "b_title": "Gestão madura (SBOM + Dependency-Track)",
+          "b_items": ["SBOM correlacionado com NVD, OSV e GHSA",
+                       "Dashboard lista apps e severidade em minutos",
+                       "Alerta e remediação disparam antes do ataque"],
+          "analogia": "Ter a lista de ingredientes (o SBOM) é só o primeiro passo; quem salva é o sistema que cruza o recall com todos os produtos e já aciona a retirada — a diferença não são os engenheiros, é a infraestrutura de governança.",
+          "glossario": [("SBOM", "Software Bill of Materials"),
+                        ("CVE", "Common Vulnerabilities and Exposures"),
+                        ("NVD", "National Vulnerability Database"),
+                        ("OSV", "Open Source Vulnerabilities"),
+                        ("GHSA", "GitHub Security Advisory")],
           "notas": "Retome o SBOM da Aula 4: gerar é metade. Hoje o valor surge quando uma plataforma correlaciona componentes com bases de vulnerabilidade e dispara correções.", "min": 8},
+         {"type": "flow", "kicker": "Conheça a ferramenta", "titulo": "O que é o Dependency-Track?",
+          "steps": [("Você entrega o SBOM", "A 'lista de ingredientes' do seu app chega pela API — nenhuma planilha, nenhum grep"),
+                    ("Ele cruza sozinho", "Compara cada componente com NVD, OSV e GHSA, 24h por dia"),
+                    ("O dashboard avisa", "Mostra CVEs, severidade e licenças por app, em minutos")],
+          "glossario": [("SBOM", "Software Bill of Materials"),
+                        ("API", "Application Programming Interface"),
+                        ("NVD", "National Vulnerability Database"),
+                        ("OSV", "Open Source Vulnerabilities"),
+                        ("GHSA", "GitHub Security Advisory"),
+                        ("CVE", "Common Vulnerabilities and Exposures")],
+          "notas": "Analogia para explicar: é o vigia do supermercado — você só entrega a lista de ingredientes de cada produto na entrada, e ele sozinho compara com a lista de recalls e aponta a prateleira perigosa, sem ninguém indo conferir produto por produto. Deixe claro o papel da ferramenta: ela detecta e avisa, não bloqueia nada sozinha. Quem decide bloquear o pipeline é a política (próximos slides) — o Dependency-Track é só o motor de busca de vulnerabilidades da organização.", "min": 6},
          {"type": "flow", "kicker": "Ciclo fechado", "titulo": "Gestão contínua de dependências",
           "steps": [("SBOM", "Gerado em cada build"),
                     ("Dependency-Track", "Correlaciona PURLs com NVD, OSV, GitHub Advisory"),
@@ -914,14 +1036,22 @@ AULAS = [
                     ("Pipeline valida", "Testes + políticas Rego; merge; novo SBOM")],
           "notas": "Enfatize o ciclo: a saída (novo build) realimenta a entrada (novo SBOM). De esforço reativo para processo preventivo.", "min": 10},
          {"type": "content", "kicker": "Fontes de verdade", "titulo": "Bases de vulnerabilidade",
-          "bullets": [("NVD (NIST):", "CVEs com pontuação CVSS"),
-                      ("OSV (Google):", "vulnerabilidades por ecossistema open source"),
-                      ("GitHub Advisory Database:", "CVEs e advisories de pacotes"),
-                      ("EPSS (FIRST):", "probabilidade real de exploração"),
+          "bullets": [("NVD (NIST):", "CVEs com pontuação CVSS", "https://nvd.nist.gov/"),
+                      ("OSV (Google):", "vulnerabilidades por ecossistema open source", "https://osv.dev/"),
+                      ("GitHub Advisory Database:", "CVEs e advisories de pacotes", "https://github.com/advisories"),
+                      ("EPSS (FIRST):", "probabilidade real de exploração", "https://www.first.org/epss/"),
                       ("Combinação:", "NVD + OSV + GHSA cobrem quase todo o espaço relevante")],
+          "glossario": [("NVD", "National Vulnerability Database"),
+                        ("NIST", "National Institute of Standards and Technology"),
+                        ("OSV", "Open Source Vulnerabilities"),
+                        ("CVE", "Common Vulnerabilities and Exposures"),
+                        ("CVSS", "Common Vulnerability Scoring System"),
+                        ("EPSS", "Exploit Prediction Scoring System"),
+                        ("FIRST", "Forum of Incident Response and Security Teams"),
+                        ("GHSA", "GitHub Security Advisory")],
           "notas": "CVSS mede severidade técnica; EPSS mede probabilidade de exploração. Priorização boa combina os dois com contexto da aplicação.", "min": 10},
          {"type": "code", "kicker": "Dependency-Track", "titulo": "Ingestão via API",
-          "intro": "Cada projeto é uma aplicação ou componente; autoCreate cria na primeira ingestão:",
+          "intro": "É a chamada que 'entrega o SBOM' do slide anterior: 1 projeto = 1 app/componente; autoCreate=true cadastra o projeto sozinho, no primeiro envio:",
           "code": ["export DT_URL=\"http://localhost:8081\"",
                    "export DT_KEY=\"<api-key em variável, nunca no Git>\"", "",
                    "curl -X POST \"${DT_URL}/api/v1/bom\" \\",
@@ -930,43 +1060,77 @@ AULAS = [
                    "  -F \"projectName=minha-api\" \\",
                    "  -F \"projectVersion=1.2.3\" \\",
                    "  -F \"bom=@sbom.cdx.json\"", "",
-                   "# Em segundos: componentes, CVEs e licenças no dashboard"],
+                   "# em segundos: componentes, CVEs e licenças aparecem no dashboard,",
+                   "# já cruzados com NVD, OSV e GHSA — sem grep, sem planilha"],
           "notas": "Mostre o docker-compose (apiserver + frontend). Reforce: API key em secret do CI. DefectDojo consolida findings de várias ferramentas (SAST, DAST, SCA) em uma visão única.", "min": 10},
          {"type": "content", "kicker": "Policies", "titulo": "Políticas de aceite e risco",
-          "bullets": [("Sem CVE crítica:", "Severity == CRITICAL → FAIL"),
-                      ("CVE alta envelhecida:", "HIGH e Age > 30 dias → FAIL"),
-                      ("Licença proibida:", "GPL-3.0, AGPL-3.0 → FAIL"),
-                      ("Componente desatualizado:", "última versão há > 2 anos → WARN"),
-                      ("Ações:", "FAIL alerta e bloqueia; WARN avisa; INFO registra")],
+          "bullets": [("Sem CVE crítica:", "Severity == CRITICAL → FAIL — bloqueia o deploy imediatamente"),
+                      ("CVE alta envelhecida:", "HIGH aberta há > 30 dias sem correção → FAIL"),
+                      ("Licença proibida:", "GPL-3.0 ou AGPL-3.0 (copyleft forte) → FAIL"),
+                      ("Componente desatualizado:", "sem release há > 2 anos, provável abandono → WARN"),
+                      ("Ações da policy:", "FAIL bloqueia o pipeline; WARN só alerta; INFO apenas registra")],
+          "bullet_colors": [C_RED, C_RED, C_RED, C_AMBER, C_BLUE],
+          "glossario": [("CVE", "Common Vulnerabilities and Exposures"),
+                        ("FAIL", "estado que bloqueia o pipeline"),
+                        ("WARN", "estado que alerta sem bloquear"),
+                        ("INFO", "estado apenas registrado"),
+                        ("GPL-3.0", "GNU General Public License v3"),
+                        ("AGPL-3.0", "GNU Affero General Public License v3")],
           "analogia": "É o regulamento do porto: carga com contrabando não desembarca (FAIL), carga com documentação vencida recebe aviso (WARN), o resto só é registrado.",
-          "notas": "Policy no Dependency-Track = condição + ação. Discuta exceções com prazo: aceitar risco é decisão documentada, não ausência de decisão.", "min": 10},
+          "notas": "Policy no Dependency-Track = condição + ação. A cor de cada círculo já indica a severidade: vermelho = FAIL, âmbar = WARN. Discuta exceções com prazo: aceitar risco é decisão documentada, não ausência de decisão.", "min": 10},
          {"type": "code", "kicker": "Gate", "titulo": "Bloqueando o pipeline pela API",
-          "intro": "Consulta violações FAIL do projeto e falha o build:",
+          "intro": "Consulta as violações FAIL via API do Dependency-Track e decide: pipeline segue ou é bloqueado:",
           "code": ["PROJECT_UUID=$(curl -s -H \"X-Api-Key: ${DT_KEY}\" \\",
                    "  \"${DT_URL}/api/v1/project/lookup?name=lab-node14&version=baseline\" \\",
-                   "  | jq -r .uuid)", "",
+                   "  | jq -r .uuid)",
                    "VIOLATIONS=$(curl -s -H \"X-Api-Key: ${DT_KEY}\" \\",
                    "  \"${DT_URL}/api/v1/violation/project/${PROJECT_UUID}\" \\",
                    "  | jq '[.[] | select(.policyCondition.policy.violationState == \"FAIL\")]'\\",
-                   "  | jq length)", "",
+                   "  | jq length)",
                    "echo \"Violações: $VIOLATIONS\"",
-                   "test \"$VIOLATIONS\" -eq 0 || { echo \"Pipeline bloqueado\"; exit 1; }"],
-          "notas": "Leia o comando: lookup do projeto, lista de violações, filtro por FAIL, exit 1. É o mesmo padrão de gate das Aulas 1–3, agora alimentado pelo SBOM.", "min": 8},
+                   "!test \"$VIOLATIONS\" -eq 0 || { echo \"Pipeline bloqueado\"; exit 1; }"],
+          "code_sz": 10,
+          "glossario": [("API", "Application Programming Interface"),
+                        ("UUID", "Universally Unique Identifier"),
+                        ("FAIL", "estado que bloqueia o pipeline")],
+          "notas": "Leia o comando: lookup do projeto (UUID), lista de violações, filtro por FAIL, exit 1. É o mesmo padrão de gate das Aulas 1–3, agora alimentado pelo SBOM. A linha final em vermelho é o ponto de bloqueio.", "min": 8},
+         {"type": "tools_intro", "kicker": "Remediação automatizada", "titulo": "Conheça as ferramentas: Dependabot e Renovate",
+          "tools": [
+              {"letra": "D", "cor": C_BLUE, "nome": "Dependabot",
+               "descricao": "Pense nele como um robozinho que mora dentro do GitHub: toda semana ele confere se suas dependências estão velhas ou vulneráveis e já entrega a atualização pronta, em forma de Pull Request.",
+               "link_label": "github.com/dependabot", "url": "https://github.com/dependabot"},
+              {"letra": "R", "cor": C_GREEN, "nome": "Renovate",
+               "descricao": "É o primo mais flexível do Dependabot: um bot que conversa com GitHub, GitLab, Bitbucket e Azure DevOps, e deixa você configurar exatamente como e quando cada atualização acontece.",
+               "link_label": "docs.renovatebot.com", "url": "https://docs.renovatebot.com"},
+          ],
+          "notas": "Apresente as duas ferramentas de forma leve antes da comparação técnica: ambas são bots de atualização automática de dependências, a diferença é o quanto cada uma permite configurar.", "min": 4},
          {"type": "comparison", "kicker": "Remediação automatizada", "titulo": "Dependabot vs. Renovate",
-          "a_title": "Dependabot", "a_items": ["Nativo no GitHub", "Config YAML simples (.github/dependabot.yml)", "20+ ecossistemas", "Agrupamento e automerge configuráveis"],
-          "b_title": "Renovate", "b_items": ["GitHub, GitLab, Bitbucket, Azure DevOps", "JSON com regras granulares", "90+ ecossistemas", "Automerge por tipo (patch/minor) e dashboard"],
-          "notas": "Descobrir é metade; atualizar sem quebrar é a outra. Mostre o exemplo de automerge para patch/minor e aprovação manual para major.", "min": 8},
-         {"type": "code", "kicker": "Python e IA", "titulo": "pip-audit e dependências de modelos",
-          "intro": "Ecossistema científico tem particularidades — e modelos são dependências de primeira classe:",
+          "a_title": "Dependabot", "a_items": ["Nativo no GitHub, já pronto para usar", "YAML simples: .github/dependabot.yml", "20+ ecossistemas (npm, pip, NuGet...)", "Agrupa PRs e libera automerge"],
+          "b_title": "Renovate", "b_items": ["GitHub, GitLab, Bitbucket, Azure DevOps", "JSON com regras granulares por pacote", "90+ ecossistemas, cobertura ampla", "Automerge por tipo + dashboard próprio"],
+          "glossario": [("YAML", "YAML Ain't Markup Language — formato de config"),
+                        ("JSON", "JavaScript Object Notation — formato de config"),
+                        ("PR", "Pull Request — pedido de incorporar uma mudança")],
+          "notas": "Descobrir é metade; atualizar sem quebrar é a outra. Mostre o exemplo de automerge para patch/minor e aprovação manual para major. Os selos D/R no topo de cada card ajudam a identificar rapidamente qual ferramenta é qual.", "min": 8},
+         {"type": "code", "kicker": "Python e IA", "titulo": "pip-audit: auditoria de pacotes Python",
+          "intro": "pip-audit varre o ambiente Python atrás de vulnerabilidades conhecidas nas bibliotecas instaladas:",
           "code": ["pip install pip-audit", "pip-audit --strict", "",
                    "> Found 2 known vulnerabilities in 2 packages",
-                   "> requests  2.25.0  GHSA-j8r2-6x86-q33q  Fix: 2.31.0",
-                   "> urllib3   1.26.5  GHSA-v845-jxx5-vc9f  Fix: 1.26.18", "",
-                   "# Dependências de IA que escapam do SCA tradicional:",
-                   "#  pesos (.safetensors) → hash + assinatura + fonte verificada",
-                   "#  datasets → SBOM estendido + hash",
-                   "#  frameworks (PyTorch, TF) → SCA tradicional"],
-          "notas": "OWASP Top 10 for LLM recomenda tratar modelos como dependências: procedência, hash e licença no SBOM. Lockfiles com hash (poetry, pipenv) são preferíveis a requirements.txt solto.", "min": 8},
+                   "!requests  2.25.0  GHSA-j8r2-6x86-q33q  Fix: 2.31.0",
+                   "!urllib3   1.26.5  GHSA-v845-jxx5-vc9f  Fix: 1.26.18", "",
+                   "# --strict → pipeline falha (exit != 0) se achar vulnerabilidade sem fix"],
+          "glossario": [("GHSA", "GitHub Security Advisory — identificador de vulnerabilidade")],
+          "notas": "Leia a saída: pacote, versão vulnerável, identificador GHSA e a versão com correção (Fix). --strict transforma essa checagem num gate real de CI, igual ao exit 1 das Aulas 1–3.", "min": 4},
+         {"type": "content", "kicker": "Python e IA", "titulo": "IA: pesos e datasets também são dependências",
+          "intro": "pip-audit só enxerga pacotes Python — mas um sistema de IA carrega 3 tipos de artefato que precisam de tratamento próprio:",
+          "bullets": [("Pesos do modelo (.safetensors):", "arquivo binário baixado de fora; sem hash + assinatura + fonte verificada, pode vir adulterado e o SCA não detecta"),
+                      ("Datasets de treino:", "também vêm de fora do seu código; exigem SBOM estendido + hash do conteúdo porque dado também é dependência"),
+                      ("Frameworks (PyTorch, TF):", "são bibliotecas Python normais — já cobertos pelo SCA tradicional, igual a qualquer outro pacote"),
+                      ("Regra de ouro:", "modelo e dataset são dependências de 1ª classe, não arquivos soltos — exigem procedência rastreável")],
+          "bullet_colors": [C_RED, C_AMBER, C_GREEN, C_BLUE],
+          "glossario": [("SBOM", "Software Bill of Materials"),
+                        ("SCA", "Software Composition Analysis"),
+                        ("TF", "TensorFlow")],
+          "notas": "OWASP Top 10 for LLM recomenda tratar modelos como dependências: procedência, hash e licença no SBOM. Lockfiles com hash (poetry, pipenv) são preferíveis a requirements.txt solto. As cores seguem o padrão de risco já usado nas policies: vermelho = sem cobertura hoje, âmbar = precisa de SBOM estendido, verde = já coberto.", "min": 4},
          {"type": "lab", "titulo": "Laboratório: do SBOM ao gate de pipeline",
           "passos": [("Subir:", "Dependency-Track via Docker Compose; trocar senha; gerar API key"),
                      ("Gerar e enviar:", "syft node:14-alpine → POST /api/v1/bom (lab-node14)"),
@@ -1296,15 +1460,17 @@ def build_aula(aula):
         idx += 1
         t = sd["type"]
         if t == "content":
-            sl = build_content(prs, titulo, idx, sd["titulo"], sd["bullets"], sd.get("analogia"), sd.get("kicker"))
+            sl = build_content(prs, titulo, idx, sd["titulo"], sd["bullets"], sd.get("analogia"), sd.get("kicker"), sd.get("glossario"), sd.get("bullet_colors"), sd.get("intro"))
         elif t == "image":
             sl = build_image(prs, titulo, idx, sd["titulo"], sd["image"], sd.get("bullets"), sd.get("caption"), sd.get("kicker"), sd.get("fonte"))
         elif t == "flow":
-            sl = build_flow(prs, titulo, idx, sd["titulo"], sd["steps"], sd.get("kicker"), sd.get("analogia"))
+            sl = build_flow(prs, titulo, idx, sd["titulo"], sd["steps"], sd.get("kicker"), sd.get("analogia"), sd.get("glossario"))
         elif t == "code":
-            sl = build_code(prs, titulo, idx, sd["titulo"], sd.get("intro"), sd["code"], sd.get("kicker"), sd.get("lang", "bash"))
+            sl = build_code(prs, titulo, idx, sd["titulo"], sd.get("intro"), sd["code"], sd.get("kicker"), sd.get("lang", "bash"), sd.get("analogia"), sd.get("glossario"), sd.get("code_sz"))
         elif t == "comparison":
-            sl = build_comparison(prs, titulo, idx, sd["titulo"], sd["a_title"], sd["a_items"], sd["b_title"], sd["b_items"], sd.get("kicker"))
+            sl = build_comparison(prs, titulo, idx, sd["titulo"], sd["a_title"], sd["a_items"], sd["b_title"], sd["b_items"], sd.get("kicker"), sd.get("analogia"), sd.get("glossario"))
+        elif t == "tools_intro":
+            sl = build_tools_intro(prs, titulo, idx, sd["titulo"], sd["tools"], sd.get("kicker"))
         elif t == "lab":
             sl = build_lab(prs, titulo, idx, sd["titulo"], sd["passos"], sd["entregavel"], sd.get("kicker", "Mão na massa"))
         elif t == "recap":
