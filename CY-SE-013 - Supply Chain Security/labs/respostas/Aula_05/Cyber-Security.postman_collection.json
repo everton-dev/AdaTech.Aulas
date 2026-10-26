@@ -1,0 +1,192 @@
+{
+  "info": {
+    "_postman_id": "0a77799e-db21-4c0f-90b3-44d908440a16",
+    "name": "Cyber-Security",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "27352659"
+  },
+  "item": [
+    {
+      "name": "NVD",
+      "item": [
+        {
+          "name": "NVD-CVE-API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://services.nvd.nist.gov/rest/json/cves/2.0",
+              "protocol": "https",
+              "host": [
+                "services",
+                "nvd",
+                "nist",
+                "gov"
+              ],
+              "path": [
+                "rest",
+                "json",
+                "cves",
+                "2.0"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NVD-CVE-Change-History-API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://services.nvd.nist.gov/rest/json/cvehistory/2.0",
+              "protocol": "https",
+              "host": [
+                "services",
+                "nvd",
+                "nist",
+                "gov"
+              ],
+              "path": [
+                "rest",
+                "json",
+                "cvehistory",
+                "2.0"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "OSV",
+      "item": [
+        {
+          "name": "OSV - Newtonsoft.Json",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"version\": \"12.0.3\",\r\n  \"package\": {\r\n    \"name\": \"Newtonsoft.Json\",\r\n    \"ecosystem\": \"NuGet\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.osv.dev/v1/query",
+              "protocol": "https",
+              "host": [
+                "api",
+                "osv",
+                "dev"
+              ],
+              "path": [
+                "v1",
+                "query"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "OSV - log4j",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"version\": \"2.14.1\",\r\n  \"package\": {\r\n    \"name\": \"org.apache.logging.log4j:log4j-core\",\r\n    \"ecosystem\": \"Maven\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.osv.dev/v1/query",
+              "protocol": "https",
+              "host": [
+                "api",
+                "osv",
+                "dev"
+              ],
+              "path": [
+                "v1",
+                "query"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "OSV - By Vunerabilities",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://api.osv.dev/v1/vulns/CVE-2021-44228",
+              "protocol": "https",
+              "host": [
+                "api",
+                "osv",
+                "dev"
+              ],
+              "path": [
+                "v1",
+                "vulns",
+                "CVE-2021-44228"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "EPSS",
+      "item": [
+        {
+          "name": "FIRST - epss",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.first.org/data/v1/epss",
+              "protocol": "https",
+              "host": [
+                "api",
+                "first",
+                "org"
+              ],
+              "path": [
+                "data",
+                "v1",
+                "epss"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 # Lab 05 - Dependency-Track de ponta a ponta (sobe stack, cria API key via API, ingere SBOM,
-# cria policy CRITICAL -> FAIL, roda o gate). Requer: docker compose, syft, pwsh (para chamar gate.ps1).
+# cria policy CRITICAL -> FAIL, roda o gate). Requer: docker compose, syft, pwsh (para chamar
+# gate.ps1), curl (para os POSTs sem corpo e o upload multipart do SBOM: no Windows PowerShell
+# 5.1, Invoke-RestMethod manda um Content-Type que o DT rejeita com 415 nesses POSTs, e -Form
+# so existe a partir do PowerShell 6.1).
 # Uso: .\run.ps1 | .\run.ps1 -Cleanup
 param(
     [switch]$Cleanup
@@ -68,7 +71,10 @@ $dtKey = (Invoke-RestMethod -Method Put -Headers $authHeaders -Uri "$DtUrl/api/v
 $env:DT_KEY = $dtKey
 # Automation precisa de permissoes de leitura para o gate consultar violacoes/metricas
 foreach ($permission in 'VIEW_PORTFOLIO', 'VIEW_POLICY_VIOLATION', 'VIEW_VULNERABILITY', 'POLICY_MANAGEMENT', 'PORTFOLIO_MANAGEMENT') {
-    Invoke-RestMethod -Method Post -Headers $authHeaders -Uri "$DtUrl/api/v1/permission/$permission/team/$teamUuid" | Out-Null
+    # Invoke-RestMethod (Windows PowerShell 5.1) sempre manda um Content-Type default
+    # num POST sem corpo, mesmo sem -ContentType; o endpoint nao aceita nenhum body e
+    # responde 415 nesse caso. curl.exe (sem -d) nao manda esse header.
+    curl.exe -s -X POST -H "Authorization: Bearer $token" "$DtUrl/api/v1/permission/$permission/team/$teamUuid" | Out-Null
 }
 Write-Host "   DT_KEY=$($dtKey.Substring(0, 8))... (guarde em variavel de ambiente, nunca no Git)"
 
@@ -103,9 +109,12 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host ""
 Write-Host "== 5) Enviar SBOM"
 $apiKeyHeaders = @{ 'X-Api-Key' = $dtKey }
-$upload = Invoke-RestMethod -Method Post -Headers $apiKeyHeaders -Form @{
-    autoCreate = 'true'; projectName = 'lab-node14'; projectVersion = 'baseline'; bom = Get-Item node14.cdx.json
-} -Uri "$DtUrl/api/v1/bom"
+# -Form so existe a partir do PowerShell 6.1; no Windows PowerShell 5.1 (que nao tem esse
+# parametro) usamos curl.exe para o multipart/form-data.
+$uploadJson = curl.exe -s -X POST "$DtUrl/api/v1/bom" -H "X-Api-Key: $dtKey" `
+    -F "autoCreate=true" -F "projectName=lab-node14" -F "projectVersion=baseline" `
+    -F "bom=@node14.cdx.json"
+$upload = $uploadJson | ConvertFrom-Json
 $upload | ConvertTo-Json -Compress
 if (-not $upload.token) {
     Write-Host "ERRO: upload rejeitado"
@@ -131,7 +140,8 @@ Invoke-RestMethod -Method Post -Headers $authHeaders -Uri "$DtUrl/api/v1/policy/
 # associar a policy ao projeto NAO reavalia nada sozinho (so persiste a associacao).
 # o PolicyEngine so roda dentro do upload do SBOM ou de uma analise explicita --
 # como a policy foi criada DEPOIS do upload (passo 5), precisamos forcar a reavaliacao agora.
-$analyzeToken = (Invoke-RestMethod -Method Post -Headers $authHeaders -Uri "$DtUrl/api/v1/finding/project/$projectUuid/analyze").token
+# mesmo problema do passo 3: POST sem corpo via Invoke-RestMethod leva a 415; usa curl.exe aqui tambem
+$analyzeToken = (curl.exe -s -X POST -H "Authorization: Bearer $token" "$DtUrl/api/v1/finding/project/$projectUuid/analyze" | ConvertFrom-Json).token
 Wait-Until -MaxAttempts 60 -DelaySeconds 5 -ProgressMessage "aguardando avaliacao da policy" -Condition {
     # poll no token do evento em vez de 'sleep' fixo: so seguimos quando o DT confirma
     # que terminou de processar, nao quando "achamos" que ja deu tempo
