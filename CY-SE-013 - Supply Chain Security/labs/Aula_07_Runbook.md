@@ -27,7 +27,7 @@ cosign version && syft version && docker ps
 4. Gere SBOM CycloneDX com Syft e anexe-o como atestação Cosign.
 5. Anexe uma provenance de laboratório; identifique claramente que é demonstrativa, não provenance de builder confiável.
 6. Verifique as atestações e confira sujeito, digest, predicate e identidade.
-7. Opcional: instale policy-controller em cluster de laboratório e observe a rejeição de imagem não assinada.
+7. Opcional: rode `test-k8s-policy.ps1`/`.sh`, que instala o policy-controller em um cluster kind e observa a rejeição de imagem não assinada.
 
 ## Verificação de sucesso
 A verificação da assinatura e das atestações passa para o digest esperado; uma imagem adulterada ou sem assinatura não deve ser aceita pelo gate.
@@ -37,3 +37,5 @@ Imagem identificada por digest, chaves de teste, SBOM, provenance demonstrativa 
 
 ## Resposta e teste automatizado
 `respostas/Aula_07/` — `bash respostas/Aula_07/run.sh` sobe o registry, assina o **digest**, anexa SBOM (`cyclonedx`) e provenance (`slsaprovenance1`), verifica as duas atestações e prova que uma imagem adulterada **falha** no `cosign verify`. Inclui `ClusterImagePolicy` keyless e workflow `verify-deploy.yml`. Limpeza: `run.sh --cleanup`.
+
+`test-k8s-policy.ps1`/`.sh` sobe um cluster kind, instala o policy-controller via Helm, aplica o `ClusterImagePolicy` keyless (`k8s/cluster-image-policy-keyless.yaml`) e demonstra a rejeição de uma imagem não assinada pelo admission webhook — o caminho de aceitação exige assinatura keyless real via GitHub Actions (ver `verify-deploy.yml`) e não é simulável localmente. Limpeza: `test-k8s-policy.ps1 -Cleanup` / `test-k8s-policy.sh --cleanup`.

@@ -44,17 +44,19 @@ conftest --version # Conftest: 0.7x
 | macOS | `brew install jq` |
 | Linux | `sudo apt install jq` |
 
-## kind + kubectl (Aulas 3, 7, 8)
+## kind + kubectl + helm (Aulas 3, 7, 8)
 
-| Sistema | kubectl | kind |
-|---|---|---|
-| Windows | `winget install Kubernetes.kubectl` (ou `choco install kubernetes-cli`) | `winget install Kubernetes.kind` (ou `choco install kind`) |
-| macOS | `brew install kubectl` | `brew install kind` |
-| Linux | `curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && sudo install kubectl /usr/local/bin/` | `curl -Lo kind https://kind.sigs.k8s.io/dl/latest/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/local/bin/` |
+| Sistema | kubectl | kind | helm |
+|---|---|---|---|
+| Windows | `winget install Kubernetes.kubectl` (ou `choco install kubernetes-cli`) | `winget install Kubernetes.kind` (ou `choco install kind`) | `winget install Helm.Helm` |
+| macOS | `brew install kubectl` | `brew install kind` | `brew install helm` |
+| Linux | `curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && sudo install kubectl /usr/local/bin/` | `curl -Lo kind https://kind.sigs.k8s.io/dl/latest/kind-linux-amd64 && chmod +x kind && sudo mv kind /usr/local/bin/` | `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash` |
 
 ```bash
 kind create cluster --name teste && kubectl get nodes && kind delete cluster --name teste
 ```
+
+`helm` só é necessário para o passo opcional do Aula 7 (`test-k8s-policy.ps1`/`.sh`) e para o gate de cluster do Aula 8, que instalam o Sigstore policy-controller.
 
 ## Syft e Trivy (Aulas 4, 5, 7, 8)
 

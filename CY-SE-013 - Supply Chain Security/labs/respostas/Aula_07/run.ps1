@@ -29,12 +29,13 @@ if ($Cleanup) {
 Write-Host "== 1) Registry local + build/push"
 $registryRunning = (docker ps --format '{{.Names}}') -contains 'lab-registry'
 if (-not $registryRunning) {
+    # registry:2 = imagem oficial do Docker Registry, roda local na porta 5000
     docker run -d --name lab-registry -p 5000:5000 registry:2 | Out-Null
 }
-Start-Sleep -Seconds 2
-docker build -q -t $Image . | Out-Null
-docker push -q $Image
-$repoDigest = docker inspect --format='{{index .RepoDigests 0}}' $Image
+Start-Sleep -Seconds 2   # da tempo do registry terminar de subir antes do push
+docker build -q -t $Image . | Out-Null   # -q: build silencioso, so imprime o ID da imagem
+docker push -q $Image                    # -q: push silencioso, so imprime o digest
+$repoDigest = docker inspect --format='{{index .RepoDigests 0}}' $Image   # pega o digest sha256 da imagem recem enviada
 $digest = $repoDigest.Split('@')[1]
 $ref = "$Registry/lab/banner@$digest"
 Write-Host "   imagem por digest: $ref"
@@ -42,6 +43,7 @@ Write-Host "   imagem por digest: $ref"
 Write-Host ""
 Write-Host "== 2) Par de chaves de laboratorio (NUNCA reutilizar em producao)"
 if (-not (Test-Path cosign.key)) {
+    # gera cosign.key (privada, protegida pela senha acima) e cosign.pub (publica)
     $ErrorActionPreference = 'Continue'
     cosign generate-key-pair 2>$null | Out-Null
     $ErrorActionPreference = 'Stop'
@@ -55,22 +57,25 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host ""
 Write-Host "== 4) Verificar assinatura"
+# .critical traz a identidade/digest assinados, dentro do payload da assinatura
 (cosign verify @VerifyArgs $ref | ConvertFrom-Json)[0].critical | ConvertTo-Json -Compress
 
 Write-Host ""
 Write-Host "== 5) SBOM (Syft) anexado como atestacao CycloneDX"
-syft $ref -o cyclonedx-json=sbom.cdx.json -q
-cosign attest @OfflineArgs --type cyclonedx --predicate sbom.cdx.json $ref
+syft $ref -o cyclonedx-json=sbom.cdx.json -q   # gera o SBOM (lista de componentes/dependencias) em formato CycloneDX
+cosign attest @OfflineArgs --type cyclonedx --predicate sbom.cdx.json $ref   # anexa o SBOM como atestacao assinada (in-toto)
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host ""
 Write-Host "== 6) Provenance DEMONSTRATIVA anexada como atestacao slsaprovenance"
+# provenance.json e um exemplo fixo neste lab (nao foi gerado por um CI real)
 cosign attest @OfflineArgs --type slsaprovenance1 --predicate provenance.json $ref
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host ""
 Write-Host "== 7) Verificar atestacoes e inspecionar o predicate"
 $cyclonedxAttestation = cosign verify-attestation @VerifyArgs --type cyclonedx $ref | ConvertFrom-Json
+# o predicate (conteudo real da atestacao) vem em base64 dentro do payload; aqui decodificamos para JSON
 $cyclonedxPredicate = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($cyclonedxAttestation.payload)) | ConvertFrom-Json
 Write-Host "   SBOM: $($cyclonedxPredicate.predicateType) com $($cyclonedxPredicate.predicate.components.Count) componentes"
 
@@ -107,7 +112,7 @@ Write-Host "== 9) Artefatos gravados no registry (Cosign 3 usa OCI referrers sob
 (Invoke-RestMethod -Uri "http://$Registry/v2/lab/banner/tags/list") | ConvertTo-Json -Compress
 # Continue temporario pelo mesmo motivo dos comandos nativos acima (ver comentarios anteriores)
 $ErrorActionPreference = 'Continue'
-cosign tree $ref 2>$null
+cosign tree $ref 2>$null   # mostra a arvore de assinatura(s) e atestacoes anexadas a esse digest
 $ErrorActionPreference = 'Stop'
 
 Write-Host ""
