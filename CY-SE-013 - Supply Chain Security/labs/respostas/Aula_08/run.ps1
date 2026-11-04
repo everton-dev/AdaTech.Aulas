@@ -1,5 +1,5 @@
 # Lab 08 - valida localmente tudo o que o pipeline release.yml valida (sem precisar do GitHub).
-# Requer: opa, conftest, syft, trivy, docker, node/npm.
+# Requer: opa, conftest, syft, trivy, docker, jq, node/npm.
 $ErrorActionPreference = 'Stop'
 Set-Location (Join-Path $PSScriptRoot 'api-pagamentos')
 
@@ -46,9 +46,31 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host ""
 Write-Host "== 6) Scan de vulnerabilidades CRITICAL/HIGH"
-# --exit-code 0: aqui o scan e so informativo (lista achados no terminal).
-# O gate que efetivamente bloqueia o pipeline fica no release.yml/verify.yml.
-trivy image --timeout 15m -q --severity CRITICAL,HIGH --exit-code 0 --format table api-pagamentos:local | Select-Object -Last 15
+# --exit-code 0: aqui o scan e so informativo. O gate que efetivamente bloqueia
+# o pipeline fica no release.yml/verify.yml. Escaneia uma vez para JSON (fonte
+# unica) e deriva dois formatos de leitura, porque a tabela padrao do trivy
+# (--format table) e larga demais e quebra feio em qualquer console.
+trivy image --timeout 15m -q --severity CRITICAL,HIGH --exit-code 0 --format json -o trivy-report.json api-pagamentos:local
+
+# Opcao 1: relatorio HTML navegavel (abre no browser, sem quebra de linha).
+# contrib/html.tpl vem dentro do zip de release do trivy; ajuste o caminho
+# abaixo se a sua instalacao extraiu os templates em outro lugar.
+$htmlTpl = @(
+    "./contrib/html.tpl",
+    "C:/tools/contrib/html.tpl"
+) | Where-Object { Test-Path $_ } | Select-Object -First 1
+if ($htmlTpl) {
+    trivy convert --format template --template "@$htmlTpl" -o trivy-report.html trivy-report.json
+    Write-Host "   relatorio HTML: trivy-report.html"
+} else {
+    Write-Host "   (pulei o HTML: contrib/html.tpl nao encontrado - baixe em https://github.com/aquasecurity/trivy/tree/main/contrib)"
+}
+
+# Opcao 2: tabela resumida no console, so com as colunas essenciais (sem a
+# descricao longa da CVE, que e o que faz a tabela padrao quebrar no terminal).
+Write-Host ""
+Write-Host "   resumo (target / severidade / pacote / instalada / corrigida / CVE):"
+Get-Content trivy-report.json | jq -r '.Results[]? | .Target as $t | .Vulnerabilities[]? | [$t, .Severity, .PkgName, .InstalledVersion, (.FixedVersion // "-"), .VulnerabilityID] | @tsv' | Sort-Object
 
 Write-Host ""
 Write-Host "== 7) Cenario adversarial local: Dockerfile e manifest inseguros DEVEM falhar"

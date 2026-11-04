@@ -33,9 +33,31 @@ conftest test sbom.cdx.json --policy policies/rego/sbom_required.rego --namespac
 conftest test sbom.cdx.json --policy policies/rego/license_policy.rego --namespace supply.license
 
 echo; echo "== 6) Scan de vulnerabilidades CRITICAL/HIGH"
-# --exit-code 0: aqui o scan e so informativo (lista achados no terminal).
-# O gate que efetivamente bloqueia o pipeline fica no release.yml/verify.yml.
-trivy image --timeout 15m -q --severity CRITICAL,HIGH --exit-code 0 --format table api-pagamentos:local | tail -15
+# --exit-code 0: aqui o scan e so informativo. O gate que efetivamente bloqueia
+# o pipeline fica no release.yml/verify.yml. Escaneia uma vez para JSON (fonte
+# unica) e deriva dois formatos de leitura, porque a tabela padrao do trivy
+# (--format table) e larga demais e quebra feio em qualquer console.
+trivy image --timeout 15m -q --severity CRITICAL,HIGH --exit-code 0 --format json -o trivy-report.json api-pagamentos:local
+
+# Opcao 1: relatorio HTML navegavel (abre no browser, sem quebra de linha).
+# contrib/html.tpl vem dentro do pacote de release do trivy; os caminhos abaixo
+# cobrem as instalacoes mais comuns (brew, apt/pacote .deb, zip manual).
+HTML_TPL=""
+for p in "./contrib/html.tpl" "/usr/local/share/trivy/templates/html.tpl" "/usr/share/trivy/templates/html.tpl" "$(command -v brew >/dev/null 2>&1 && brew --prefix trivy 2>/dev/null)/share/trivy/templates/html.tpl"; do
+    if [[ -n "$p" && -f "$p" ]]; then HTML_TPL="$p"; break; fi
+done
+if [[ -n "$HTML_TPL" ]]; then
+    trivy convert --format template --template "@$HTML_TPL" -o trivy-report.html trivy-report.json
+    echo "   relatorio HTML: trivy-report.html"
+else
+    echo "   (pulei o HTML: contrib/html.tpl nao encontrado - baixe em https://github.com/aquasecurity/trivy/tree/main/contrib)"
+fi
+
+# Opcao 2: tabela resumida no console, so com as colunas essenciais (sem a
+# descricao longa da CVE, que e o que faz a tabela padrao quebrar no terminal).
+echo
+echo "   resumo (target / severidade / pacote / instalada / corrigida / CVE):"
+jq -r '.Results[]? | .Target as $t | .Vulnerabilities[]? | [$t, .Severity, .PkgName, .InstalledVersion, (.FixedVersion // "-"), .VulnerabilityID] | @tsv' trivy-report.json | sort
 
 echo; echo "== 7) Cenario adversarial local: Dockerfile e manifest inseguros DEVEM falhar"
 # Prova negativa das policies: se este Dockerfile (base nao aprovada + root)
